@@ -107,6 +107,36 @@
         </v-card-text>
       </v-card>
 
+      <!-- Nutritional Values -->
+      <v-card class="mb-4">
+        <v-card-title class="pb-1">Nutritional Values</v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12" sm="6">
+              <p class="text-caption text-uppercase text-medium-emphasis mb-2">Total (whole recipe)</p>
+              <div class="d-flex flex-wrap ga-2">
+                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.total.calories }} kcal</v-chip>
+                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.total.protein }}g protein</v-chip>
+                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.total.carbs }}g carbs</v-chip>
+                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.total.fat }}g fat</v-chip>
+              </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <p class="text-caption text-uppercase text-medium-emphasis mb-2">Per serving ({{ selectedRecipe.servings }} servings)</p>
+              <div class="d-flex flex-wrap ga-2">
+                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.perServing.calories }} kcal</v-chip>
+                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.perServing.protein }}g protein</v-chip>
+                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.perServing.carbs }}g carbs</v-chip>
+                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.perServing.fat }}g fat</v-chip>
+              </div>
+            </v-col>
+          </v-row>
+          <p v-if="recipeNutrition.total.calories === 0" class="text-body-2 text-medium-emphasis mt-2">
+            Nutritional data unavailable — add ingredients with nutrition info to see values.
+          </p>
+        </v-card-text>
+      </v-card>
+
       <!-- Steps -->
       <v-card>
         <v-card-title class="d-flex align-center justify-space-between pb-1">
@@ -206,14 +236,41 @@
 import { ref, computed } from 'vue'
 import { useRecipesStore } from '../stores/recipes'
 import { useShoppingListsStore } from '../stores/shoppingLists'
+import { useIngredientsStore } from '../stores/ingredients'
 import RecipeCard from '../components/RecipeCard.vue'
 import RecipeWizard from '../components/RecipeWizard.vue'
 
 const recipesStore = useRecipesStore()
 const listsStore = useShoppingListsStore()
+const ingredientsStore = useIngredientsStore()
 
 const recipes = computed(() => recipesStore.recipes)
 const shoppingLists = computed(() => listsStore.lists)
+
+const recipeNutrition = computed(() => {
+  const recipe = selectedRecipe.value
+  if (!recipe) return { total: { calories: 0, protein: 0, carbs: 0, fat: 0 }, perServing: { calories: 0, protein: 0, carbs: 0, fat: 0 } }
+  let calories = 0, protein = 0, carbs = 0, fat = 0
+  for (const ing of (recipe.ingredients || [])) {
+    const data = ingredientsStore.getIngredient(ing.ingredientId)
+    if (data) {
+      calories += (data.calories || 0) * ing.quantity
+      protein += (data.protein || 0) * ing.quantity
+      carbs += (data.carbs || 0) * ing.quantity
+      fat += (data.fat || 0) * ing.quantity
+    }
+  }
+  const servings = recipe.servings > 0 ? recipe.servings : 1
+  return {
+    total: { calories: Math.round(calories), protein: Math.round(protein), carbs: Math.round(carbs), fat: Math.round(fat) },
+    perServing: {
+      calories: Math.round(calories / servings),
+      protein: Math.round(protein / servings),
+      carbs: Math.round(carbs / servings),
+      fat: Math.round(fat / servings),
+    },
+  }
+})
 
 const selectedRecipe = ref(null)
 const targetListId = ref('')
