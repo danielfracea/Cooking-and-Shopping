@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { saveCollectionAsJson, loadCollectionAsJson, isFirebaseConfigured } from '../firebase.js'
 
 const STORAGE_KEY = 'cooking_ingredients'
+const FIRESTORE_KEY = 'ingredients'
 
 const DEFAULT_INGREDIENTS = [
   { id: '1', name: 'Chicken Breast', price: 5.99, unit: 'kg', calories: 165, protein: 31, carbs: 0, fat: 3.6, category: 'Meat' },
@@ -25,10 +27,20 @@ function loadFromStorage() {
 
 function saveToStorage(ingredients) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ingredients))
+  saveCollectionAsJson(FIRESTORE_KEY, ingredients).catch(console.error)
 }
 
 export const useIngredientsStore = defineStore('ingredients', () => {
   const ingredients = ref(loadFromStorage())
+
+  if (isFirebaseConfigured()) {
+    loadCollectionAsJson(FIRESTORE_KEY).then(data => {
+      if (data) {
+        ingredients.value = data
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      }
+    }).catch(console.error)
+  }
 
   function addIngredient(ingredient) {
     const newIng = {
