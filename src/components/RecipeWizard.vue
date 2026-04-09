@@ -22,14 +22,14 @@
         <!-- No steps fallback -->
         <div v-if="steps.length === 0" class="text-center py-8 text-medium-emphasis">
           <v-icon size="48" class="mb-3">mdi-text-box-outline</v-icon>
-          <p>No steps have been added for this recipe yet.</p>
+          <p>{{ t('recipeWizard.noSteps') }}</p>
         </div>
 
         <template v-else>
           <!-- Step counter -->
           <div class="d-flex align-center justify-space-between mb-4">
             <v-chip size="small" color="primary" variant="tonal">
-              Step {{ currentIndex + 1 }} of {{ steps.length }}
+              {{ t('recipeWizard.stepOf', { current: currentIndex + 1, total: steps.length }) }}
             </v-chip>
             <div class="d-flex ga-1">
               <v-icon
@@ -46,7 +46,7 @@
           <!-- Step card -->
           <v-card variant="tonal" color="primary" rounded="lg" class="mb-4">
             <v-card-text class="pa-5">
-              <p class="text-overline text-primary mb-1">Step {{ currentIndex + 1 }}</p>
+              <p class="text-overline text-primary mb-1">{{ t('recipeWizard.stepLabel', { n: currentIndex + 1 }) }}</p>
               <p class="text-h6 font-weight-bold mb-3">{{ currentStep.title }}</p>
               <p class="text-body-1">{{ currentStep.description }}</p>
             </v-card-text>
@@ -61,7 +61,7 @@
             icon="mdi-check-circle"
             class="mb-2"
           >
-            🎉 You've completed all the steps! Enjoy your meal!
+            {{ t('recipeWizard.completed') }}
           </v-alert>
         </template>
       </v-card-text>
@@ -74,7 +74,7 @@
           :disabled="currentIndex === 0"
           @click="prev"
         >
-          Previous
+          {{ t('recipeWizard.previous') }}
         </v-btn>
         <v-spacer />
         <v-btn
@@ -83,7 +83,7 @@
           append-icon="mdi-chevron-right"
           @click="next"
         >
-          Next
+          {{ t('recipeWizard.next') }}
         </v-btn>
         <v-btn
           v-else
@@ -91,7 +91,7 @@
           prepend-icon="mdi-check"
           @click="close"
         >
-          Done
+          {{ t('recipeWizard.done') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -100,6 +100,9 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: Boolean,

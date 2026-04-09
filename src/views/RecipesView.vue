@@ -2,18 +2,18 @@
   <div>
     <div v-if="!selectedRecipe">
       <div class="d-flex align-center justify-space-between mb-6 flex-wrap ga-3">
-        <h1 class="text-h5 font-weight-bold">📖 Recipes</h1>
-        <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddRecipe">Add Recipe</v-btn>
+        <h1 class="text-h5 font-weight-bold">{{ t('recipes.title') }}</h1>
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddRecipe">{{ t('recipes.add') }}</v-btn>
       </div>
 
       <v-empty-state
         v-if="recipes.length === 0"
         icon="mdi-book-open-outline"
-        title="No recipes yet"
-        text="Add your first recipe to get started."
+        :title="t('recipes.empty.title')"
+        :text="t('recipes.empty.text')"
       >
         <template #actions>
-          <v-btn color="primary" @click="openAddRecipe">Add Your First Recipe</v-btn>
+          <v-btn color="primary" @click="openAddRecipe">{{ t('recipes.empty.action') }}</v-btn>
         </template>
       </v-empty-state>
 
@@ -50,7 +50,7 @@
     <div v-else>
       <div class="d-flex align-center justify-space-between mb-4 flex-wrap ga-3">
         <div class="d-flex align-center ga-3 flex-wrap">
-          <v-btn variant="outlined" size="small" prepend-icon="mdi-arrow-left" @click="selectedRecipe = null">Back</v-btn>
+          <v-btn variant="outlined" size="small" prepend-icon="mdi-arrow-left" @click="selectedRecipe = null">{{ t('recipes.detail.back') }}</v-btn>
           <h2 class="text-h5 font-weight-bold">{{ selectedRecipe.name }}</h2>
           <v-chip v-if="selectedRecipe.category" size="small" color="blue-lighten-4" text-color="blue-darken-3">{{ selectedRecipe.category }}</v-chip>
         </div>
@@ -61,17 +61,17 @@
             :disabled="(selectedRecipe.steps || []).length === 0"
             @click="showWizard = true"
           >
-            Start Cooking
+            {{ t('recipes.detail.startCooking') }}
           </v-btn>
-          <v-btn color="error" size="small" variant="outlined" prepend-icon="mdi-delete" @click="deleteRecipe(selectedRecipe.id)">Delete</v-btn>
+          <v-btn color="error" size="small" variant="outlined" prepend-icon="mdi-delete" @click="deleteRecipe(selectedRecipe.id)">{{ t('recipes.detail.delete') }}</v-btn>
         </div>
       </div>
 
       <v-row class="mb-4">
         <v-col cols="12" md="6">
           <v-card height="100%">
-            <v-card-title class="text-caption text-uppercase text-medium-emphasis pb-1">Description</v-card-title>
-            <v-card-text>{{ selectedRecipe.description || 'No description' }}</v-card-text>
+            <v-card-title class="text-caption text-uppercase text-medium-emphasis pb-1">{{ t('recipes.detail.description') }}</v-card-title>
+            <v-card-text>{{ selectedRecipe.description || t('recipes.detail.noDescription') }}</v-card-text>
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
@@ -79,12 +79,12 @@
             <v-card-text>
               <v-row>
                 <v-col cols="6" class="text-center">
-                  <p class="text-caption text-uppercase text-medium-emphasis">Prep Time</p>
-                  <p class="text-h5 font-weight-bold">{{ selectedRecipe.prepTime }}<span class="text-body-2"> min</span></p>
+                  <p class="text-caption text-uppercase text-medium-emphasis">{{ t('recipes.detail.prepTime') }}</p>
+                  <p class="text-h5 font-weight-bold">{{ selectedRecipe.prepTime }}<span class="text-body-2"> {{ t('recipes.detail.min') }}</span></p>
                 </v-col>
                 <v-col cols="6" class="text-center">
-                  <p class="text-caption text-uppercase text-medium-emphasis">Servings</p>
-                  <p class="text-h5 font-weight-bold">{{ selectedRecipe.servings }}<span class="text-body-2"> ppl</span></p>
+                  <p class="text-caption text-uppercase text-medium-emphasis">{{ t('recipes.detail.servings') }}</p>
+                  <p class="text-h5 font-weight-bold">{{ selectedRecipe.servings }}<span class="text-body-2"> {{ t('recipes.detail.ppl') }}</span></p>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -94,7 +94,7 @@
 
       <!-- Ingredients -->
       <v-card class="mb-4">
-        <v-card-title class="pb-1">Ingredients</v-card-title>
+        <v-card-title class="pb-1">{{ t('recipes.detail.ingredients') }}</v-card-title>
         <v-list density="compact">
           <v-list-item
             v-for="ing in selectedRecipe.ingredients"
@@ -109,21 +109,21 @@
         </v-list>
         <v-divider />
         <v-card-text>
-          <p class="font-weight-medium mb-3">Add all ingredients to a shopping list:</p>
+          <p class="font-weight-medium mb-3">{{ t('recipes.detail.addToListLabel') }}</p>
           <div class="d-flex align-center ga-3 flex-wrap">
             <v-select
               v-model="targetListId"
               :items="shoppingLists"
               item-title="name"
               item-value="id"
-              label="Select a list"
+              :label="t('recipes.detail.selectList')"
               variant="outlined"
               density="compact"
               hide-details
               style="max-width:280px"
             />
-            <v-btn color="primary" prepend-icon="mdi-cart" :disabled="!targetListId" @click="addToList">Add to List</v-btn>
-            <v-btn variant="outlined" prepend-icon="mdi-plus" @click="createAndAdd">New List &amp; Add</v-btn>
+            <v-btn color="primary" prepend-icon="mdi-cart" :disabled="!targetListId" @click="addToList">{{ t('recipes.detail.addToList') }}</v-btn>
+            <v-btn variant="outlined" prepend-icon="mdi-plus" @click="createAndAdd">{{ t('recipes.detail.newListAndAdd') }}</v-btn>
           </div>
           <v-alert v-if="addedMessage" type="success" variant="tonal" density="compact" class="mt-3">{{ addedMessage }}</v-alert>
         </v-card-text>
@@ -131,30 +131,30 @@
 
       <!-- Nutritional Values -->
       <v-card class="mb-4">
-        <v-card-title class="pb-1">Nutritional Values</v-card-title>
+        <v-card-title class="pb-1">{{ t('recipes.detail.nutritionalValues') }}</v-card-title>
         <v-card-text>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <p class="text-caption text-uppercase text-medium-emphasis mb-2">Total (whole recipe)</p>
+              <p class="text-caption text-uppercase text-medium-emphasis mb-2">{{ t('recipes.detail.total') }}</p>
               <div class="d-flex flex-wrap ga-2">
-                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.total.calories }} kcal</v-chip>
-                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.total.protein }}g protein</v-chip>
-                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.total.carbs }}g carbs</v-chip>
-                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.total.fat }}g fat</v-chip>
+                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.total.calories }} {{ t('recipes.detail.kcal') }}</v-chip>
+                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.total.protein }}g {{ t('recipes.detail.protein') }}</v-chip>
+                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.total.carbs }}g {{ t('recipes.detail.carbs') }}</v-chip>
+                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.total.fat }}g {{ t('recipes.detail.fat') }}</v-chip>
               </div>
             </v-col>
             <v-col cols="12" sm="6">
-              <p class="text-caption text-uppercase text-medium-emphasis mb-2">Per serving ({{ selectedRecipe.servings }} servings)</p>
+              <p class="text-caption text-uppercase text-medium-emphasis mb-2">{{ t('recipes.detail.perServing', { n: selectedRecipe.servings }) }}</p>
               <div class="d-flex flex-wrap ga-2">
-                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.perServing.calories }} kcal</v-chip>
-                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.perServing.protein }}g protein</v-chip>
-                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.perServing.carbs }}g carbs</v-chip>
-                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.perServing.fat }}g fat</v-chip>
+                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.perServing.calories }} {{ t('recipes.detail.kcal') }}</v-chip>
+                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.perServing.protein }}g {{ t('recipes.detail.protein') }}</v-chip>
+                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.perServing.carbs }}g {{ t('recipes.detail.carbs') }}</v-chip>
+                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.perServing.fat }}g {{ t('recipes.detail.fat') }}</v-chip>
               </div>
             </v-col>
           </v-row>
           <p v-if="recipeNutrition.total.calories === 0" class="text-body-2 text-medium-emphasis mt-2">
-            Nutritional data unavailable — add ingredients with nutrition info to see values.
+            {{ t('recipes.detail.noNutrition') }}
           </p>
         </v-card-text>
       </v-card>
@@ -162,12 +162,12 @@
       <!-- Steps -->
       <v-card>
         <v-card-title class="d-flex align-center justify-space-between pb-1">
-          <span>Preparation Steps</span>
-          <v-btn size="small" variant="text" color="primary" prepend-icon="mdi-plus" @click="openAddStep">Add Step</v-btn>
+          <span>{{ t('recipes.detail.preparationSteps') }}</span>
+          <v-btn size="small" variant="text" color="primary" prepend-icon="mdi-plus" @click="openAddStep">{{ t('recipes.detail.addStep') }}</v-btn>
         </v-card-title>
 
         <div v-if="(selectedRecipe.steps || []).length === 0" class="pa-4 text-medium-emphasis text-body-2 text-center">
-          No steps yet. Add the first preparation step.
+          {{ t('recipes.detail.noSteps') }}
         </div>
 
         <v-list v-else density="compact">
@@ -192,31 +192,22 @@
     <v-dialog v-model="showAddRecipe" max-width="520">
       <v-card>
         <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
-          <span>Add New Recipe</span>
+          <span>{{ t('recipes.addDialog.title') }}</span>
           <v-btn icon="mdi-close" variant="text" size="small" @click="showAddRecipe = false" />
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="newRecipe.name" label="Recipe Name *" variant="outlined" density="compact" placeholder="e.g. Spaghetti Bolognese" class="mb-2" />
-          <v-text-field v-model="newRecipe.description" label="Description" variant="outlined" density="compact" class="mb-2" />
+          <v-text-field v-model="newRecipe.name" :label="t('recipes.addDialog.name')" variant="outlined" density="compact" :placeholder="t('recipes.addDialog.placeholder.name')" class="mb-2" />
+          <v-text-field v-model="newRecipe.description" :label="t('recipes.addDialog.description')" variant="outlined" density="compact" class="mb-2" />
           <v-row dense>
-            <v-col cols="12" sm="4">
-              <v-combobox
-                v-model="newRecipe.category"
-                :items="RECIPE_CATEGORIES"
-                label="Category"
-                variant="outlined"
-                density="compact"
-                clearable
-              />
-            </v-col>
-            <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.prepTime" label="Prep Time (min)" type="number" variant="outlined" density="compact" min="0" /></v-col>
-            <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.servings" label="Servings" type="number" variant="outlined" density="compact" min="1" /></v-col>
+            <v-col cols="12" sm="4"><v-text-field v-model="newRecipe.category" :label="t('recipes.addDialog.category')" variant="outlined" density="compact" /></v-col>
+            <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.prepTime" :label="t('recipes.addDialog.prepTime')" type="number" variant="outlined" density="compact" min="0" /></v-col>
+            <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.servings" :label="t('recipes.addDialog.servings')" type="number" variant="outlined" density="compact" min="1" /></v-col>
           </v-row>
         </v-card-text>
         <v-card-actions class="px-4 pb-4">
           <v-spacer />
-          <v-btn variant="text" @click="showAddRecipe = false">Cancel</v-btn>
-          <v-btn color="primary" :disabled="!newRecipe.name.trim()" @click="saveRecipe">Create Recipe</v-btn>
+          <v-btn variant="text" @click="showAddRecipe = false">{{ t('recipes.addDialog.cancel') }}</v-btn>
+          <v-btn color="primary" :disabled="!newRecipe.name.trim()" @click="saveRecipe">{{ t('recipes.addDialog.create') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -225,31 +216,31 @@
     <v-dialog v-model="showAddStep" max-width="480">
       <v-card>
         <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
-          <span>Add Preparation Step</span>
+          <span>{{ t('recipes.stepDialog.title') }}</span>
           <v-btn icon="mdi-close" variant="text" size="small" @click="showAddStep = false" />
         </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="newStep.title"
-            label="Step Title *"
+            :label="t('recipes.stepDialog.stepTitle')"
             variant="outlined"
             density="compact"
-            placeholder="e.g. Boil the water"
+            :placeholder="t('recipes.stepDialog.placeholder.stepTitle')"
             class="mb-2"
           />
           <v-textarea
             v-model="newStep.description"
-            label="Instructions *"
+            :label="t('recipes.stepDialog.instructions')"
             variant="outlined"
             density="compact"
             rows="3"
-            placeholder="Describe what to do in this step..."
+            :placeholder="t('recipes.stepDialog.placeholder.instructions')"
           />
         </v-card-text>
         <v-card-actions class="px-4 pb-4">
           <v-spacer />
-          <v-btn variant="text" @click="showAddStep = false">Cancel</v-btn>
-          <v-btn color="primary" :disabled="!newStep.title.trim() || !newStep.description.trim()" @click="saveStep">Add Step</v-btn>
+          <v-btn variant="text" @click="showAddStep = false">{{ t('recipes.stepDialog.cancel') }}</v-btn>
+          <v-btn color="primary" :disabled="!newStep.title.trim() || !newStep.description.trim()" @click="saveStep">{{ t('recipes.stepDialog.add') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -265,12 +256,14 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRecipesStore, RECIPE_CATEGORIES } from '../stores/recipes'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
 import RecipeCard from '../components/RecipeCard.vue'
 import RecipeWizard from '../components/RecipeWizard.vue'
 
+const { t } = useI18n()
 const recipesStore = useRecipesStore()
 const listsStore = useShoppingListsStore()
 const ingredientsStore = useIngredientsStore()
@@ -337,19 +330,19 @@ function addToList() {
   if (!targetListId.value) return
   listsStore.addRecipeIngredientsToList(targetListId.value, selectedRecipe.value.ingredients)
   const list = listsStore.getList(targetListId.value)
-  addedMessage.value = `Added to "${list.name}"!`
+  addedMessage.value = t('recipes.detail.addedTo', { name: list.name })
   setTimeout(() => addedMessage.value = '', 3000)
 }
 
 function createAndAdd() {
   const list = listsStore.createList(`${selectedRecipe.value.name} Ingredients`)
   listsStore.addRecipeIngredientsToList(list.id, selectedRecipe.value.ingredients)
-  addedMessage.value = `Created "${list.name}"!`
+  addedMessage.value = t('recipes.detail.created', { name: list.name })
   setTimeout(() => addedMessage.value = '', 3000)
 }
 
 function deleteRecipe(id) {
-  if (confirm('Delete this recipe?')) {
+  if (confirm(t('recipes.confirm.delete'))) {
     recipesStore.deleteRecipe(id)
     selectedRecipe.value = null
   }
@@ -391,4 +384,3 @@ function removeStep(index) {
   selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
 }
 </script>
-

@@ -3,25 +3,25 @@
     <v-empty-state
       v-if="error"
       icon="mdi-alert-circle-outline"
-      title="Invalid share link"
-      text="This link is invalid or has expired."
+      :title="t('sharedList.error.title')"
+      :text="t('sharedList.error.text')"
     >
       <template #actions>
-        <v-btn :to="'/shopping-lists'" variant="outlined">Go to My Lists</v-btn>
+        <v-btn :to="'/shopping-lists'" variant="outlined">{{ t('sharedList.error.action') }}</v-btn>
       </template>
     </v-empty-state>
 
     <div v-else-if="sharedList">
       <div class="d-flex align-center justify-space-between mb-4 flex-wrap ga-3">
         <div class="d-flex align-center ga-3">
-          <v-btn :to="'/shopping-lists'" variant="outlined" size="small" prepend-icon="mdi-arrow-left">My Lists</v-btn>
+          <v-btn :to="'/shopping-lists'" variant="outlined" size="small" prepend-icon="mdi-arrow-left">{{ t('sharedList.myLists') }}</v-btn>
           <div>
             <h1 class="text-h5 font-weight-bold">{{ sharedList.name }}</h1>
-            <span class="text-caption text-medium-emphasis">Shared list (read-only)</span>
+            <span class="text-caption text-medium-emphasis">{{ t('sharedList.readOnly') }}</span>
           </div>
         </div>
         <v-btn color="primary" prepend-icon="mdi-import" :loading="importing" @click="importList">
-          Import to My Lists
+          {{ t('sharedList.import') }}
         </v-btn>
       </div>
 
@@ -34,7 +34,7 @@
       <v-empty-state
         v-if="sharedList.items.length === 0"
         icon="mdi-clipboard-list-outline"
-        title="No items in this list"
+        :title="t('sharedList.empty.title')"
       />
 
       <v-card v-else>
@@ -52,9 +52,9 @@
       </v-card>
 
       <v-snackbar v-model="snackbar" color="success" :timeout="3000">
-        List imported! You can now find it in your lists.
+        {{ t('sharedList.snackbar.imported') }}
         <template #actions>
-          <v-btn variant="text" @click="router.push('/shopping-lists')">View</v-btn>
+          <v-btn variant="text" @click="router.push('/shopping-lists')">{{ t('sharedList.snackbar.view') }}</v-btn>
         </template>
       </v-snackbar>
     </div>
@@ -64,8 +64,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const store = useShoppingListsStore()
