@@ -140,7 +140,7 @@ export default {
       title: 'Adaugă rețetă nouă',
       name: 'Numele rețetei *',
       description: 'Descriere',
-      category: 'Categorie',
+      tags: 'Etichete',
       prepTime: 'Timp de preparare (min)',
       servings: 'Porții',
       cancel: 'Anulare',

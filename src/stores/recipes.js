@@ -5,7 +5,7 @@ import { saveCollectionAsJson, subscribeToCollection, isFirebaseConfigured } fro
 const STORAGE_KEY = 'cooking_recipes'
 const FIRESTORE_KEY = 'recipes'
 
-export const RECIPE_CATEGORIES = [
+export const RECIPE_TAGS = [
   'Breakfast',
   'Salad',
   'Soup',
@@ -14,6 +14,7 @@ export const RECIPE_CATEGORIES = [
   'Healthy',
   'Dessert',
   'Snack',
+  'Pasta',
   'Other',
 ]
 
@@ -24,7 +25,7 @@ const DEFAULT_RECIPES = [
     description: 'Spicy Italian pasta with tomato sauce',
     servings: 4,
     prepTime: 30,
-    category: 'Italian',
+    tags: ['Italian', 'Pasta', 'Main Course'],
     ingredients: [
       { ingredientId: '2', name: 'Pasta', quantity: 0.5, unit: 'kg' },
       { ingredientId: '3', name: 'Tomato', quantity: 0.4, unit: 'kg' },
@@ -45,7 +46,7 @@ const DEFAULT_RECIPES = [
     description: 'Healthy chicken and rice with vegetables',
     servings: 2,
     prepTime: 40,
-    category: 'Main Course',
+    tags: ['Main Course', 'Healthy'],
     ingredients: [
       { ingredientId: '1', name: 'Chicken Breast', quantity: 0.4, unit: 'kg' },
       { ingredientId: '7', name: 'Rice', quantity: 0.2, unit: 'kg' },
@@ -66,7 +67,7 @@ const DEFAULT_RECIPES = [
     description: 'Simple and delicious aglio e olio',
     servings: 2,
     prepTime: 20,
-    category: 'Italian',
+    tags: ['Italian', 'Pasta'],
     ingredients: [
       { ingredientId: '2', name: 'Pasta', quantity: 0.3, unit: 'kg' },
       { ingredientId: '5', name: 'Garlic', quantity: 0.03, unit: 'kg' },
@@ -85,7 +86,7 @@ const DEFAULT_RECIPES = [
     description: 'Classic Mediterranean salad with feta and olives',
     servings: 2,
     prepTime: 15,
-    category: 'Salad',
+    tags: ['Salad', 'Healthy'],
     ingredients: [
       { ingredientId: '3', name: 'Tomato', quantity: 0.3, unit: 'kg' },
       { ingredientId: '4', name: 'Olive Oil', quantity: 0.03, unit: 'L' },
@@ -102,7 +103,7 @@ const DEFAULT_RECIPES = [
     description: 'Light and fluffy chocolate dessert',
     servings: 4,
     prepTime: 20,
-    category: 'Dessert',
+    tags: ['Dessert'],
     ingredients: [],
     steps: [
       { id: 's5-1', title: 'Melt the Chocolate', description: 'Break dark chocolate into pieces and melt over a bain-marie. Let it cool slightly.' },
@@ -149,7 +150,7 @@ export const useRecipesStore = defineStore('recipes', () => {
       description: recipe.description || '',
       servings: parseInt(recipe.servings) || 1,
       prepTime: parseInt(recipe.prepTime) || 0,
-      category: recipe.category || 'Other',
+      tags: Array.isArray(recipe.tags) ? recipe.tags : [],
       ingredients: recipe.ingredients || [],
       steps: recipe.steps || [],
     }

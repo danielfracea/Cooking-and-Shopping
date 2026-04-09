@@ -2,7 +2,9 @@
   <v-card hover @click="$emit('view', recipe)" :ripple="true">
     <v-card-title class="d-flex align-start justify-space-between ga-2 flex-wrap pb-1">
       <span class="text-subtitle-1 font-weight-semibold">{{ recipe.name }}</span>
-      <v-chip v-if="recipe.category" size="x-small" color="blue-lighten-4" text-color="blue-darken-3">{{ recipe.category }}</v-chip>
+      <div class="d-flex flex-wrap ga-1">
+        <v-chip v-for="tag in (recipe.tags || [])" :key="tag" size="x-small" color="blue-lighten-4" text-color="blue-darken-3">{{ tag }}</v-chip>
+      </div>
     </v-card-title>
     <v-card-text class="pt-1">
       <p v-if="recipe.description" class="text-body-2 text-medium-emphasis mb-3">{{ recipe.description }}</p>
@@ -12,8 +14,20 @@
         <span><v-icon size="14" class="mr-1">mdi-food-variant</v-icon>{{ recipe.ingredients.length }} {{ t('recipeCard.ingredients') }}</span>
       </div>
       <div v-if="nutrition.calories > 0" class="d-flex flex-wrap ga-2 text-caption">
-        <v-chip size="x-small" color="orange-lighten-4" prepend-icon="mdi-fire">{{ nutrition.calories }} kcal</v-chip>
-        <v-chip size="x-small" color="red-lighten-4" prepend-icon="mdi-arm-flex">{{ nutrition.protein }}g {{ t('recipeCard.protein') }}</v-chip>
+        <div class="nutrition-stat rounded-lg px-2 py-1 bg-orange-lighten-4 d-flex align-center ga-1">
+          <v-icon size="13" color="deep-orange-darken-1">mdi-fire</v-icon>
+          <div>
+            <div class="text-caption font-weight-bold nutrition-stat__value">{{ nutrition.calories }}</div>
+            <div class="nutrition-stat__label">kcal</div>
+          </div>
+        </div>
+        <div class="nutrition-stat rounded-lg px-2 py-1 bg-red-lighten-4 d-flex align-center ga-1">
+          <v-icon size="13" color="red-darken-1">mdi-arm-flex</v-icon>
+          <div>
+            <div class="text-caption font-weight-bold nutrition-stat__value">{{ nutrition.protein }}g</div>
+            <div class="nutrition-stat__label">{{ t('recipeCard.protein') }}</div>
+          </div>
+        </div>
       </div>
     </v-card-text>
   </v-card>
@@ -42,4 +56,16 @@ const nutrition = computed(() => {
   return { calories: Math.round(calories), protein: Math.round(protein) }
 })
 </script>
+
+<style scoped>
+.nutrition-stat__value {
+  line-height: 1.2;
+}
+.nutrition-stat__label {
+  font-size: 0.65rem;
+  line-height: 1;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+</style>
 
