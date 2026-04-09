@@ -1,92 +1,85 @@
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal">
-      <div class="modal-header">
-        <h2 class="modal-title">Add Item</h2>
-        <button class="modal-close" @click="$emit('close')">×</button>
-      </div>
+  <v-dialog model-value max-width="500" @update:model-value="$emit('close')">
+    <v-card>
+      <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
+        <span>Add Item</span>
+        <v-btn icon="mdi-close" variant="text" size="small" @click="$emit('close')" />
+      </v-card-title>
 
-      <div class="tab-bar">
-        <button :class="['tab-btn', { active: activeTab === 'manual' }]" @click="activeTab = 'manual'">Manual</button>
-        <button :class="['tab-btn', { active: activeTab === 'ingredient' }]" @click="activeTab = 'ingredient'">From Ingredients</button>
-        <button :class="['tab-btn', { active: activeTab === 'recipe' }]" @click="activeTab = 'recipe'">From Recipe</button>
-      </div>
+      <v-tabs v-model="activeTab" color="primary" grow>
+        <v-tab value="manual">Manual</v-tab>
+        <v-tab value="ingredient">From Ingredients</v-tab>
+        <v-tab value="recipe">From Recipe</v-tab>
+      </v-tabs>
 
-      <!-- Manual Tab -->
-      <div v-if="activeTab === 'manual'" class="tab-content">
-        <div class="form-group">
-          <label>Item Name *</label>
-          <input class="form-control" v-model="manualItem.name" placeholder="e.g. Milk" />
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Quantity</label>
-            <input class="form-control" type="number" v-model="manualItem.quantity" min="0.1" step="0.1" />
-          </div>
-          <div class="form-group">
-            <label>Unit</label>
-            <input class="form-control" v-model="manualItem.unit" placeholder="kg, L, pcs..." />
-          </div>
-        </div>
-        <button class="btn btn-primary" style="width:100%" @click="addManual" :disabled="!manualItem.name.trim()">Add Item</button>
-      </div>
+      <v-card-text class="pt-4">
+        <v-tabs-window v-model="activeTab">
+          <!-- Manual Tab -->
+          <v-tabs-window-item value="manual">
+            <v-text-field v-model="manualItem.name" label="Item Name *" variant="outlined" density="compact" class="mb-3" />
+            <v-row dense>
+              <v-col cols="6">
+                <v-text-field v-model="manualItem.quantity" label="Quantity" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
+              </v-col>
+              <v-col cols="6">
+                <v-text-field v-model="manualItem.unit" label="Unit" variant="outlined" density="compact" placeholder="kg, L, pcs..." />
+              </v-col>
+            </v-row>
+            <v-btn color="primary" block @click="addManual" :disabled="!manualItem.name.trim()">Add Item</v-btn>
+          </v-tabs-window-item>
 
-      <!-- From Ingredients Tab -->
-      <div v-if="activeTab === 'ingredient'" class="tab-content">
-        <input class="form-control" v-model="ingredientSearch" placeholder="Search ingredients..." style="margin-bottom:12px" />
-        <div class="ingredient-list">
-          <div
-            v-for="ing in filteredIngredients"
-            :key="ing.id"
-            :class="['ingredient-option', { selected: selectedIngredient?.id === ing.id }]"
-            @click="selectIngredient(ing)"
-          >
-            <span class="ing-name">{{ ing.name }}</span>
-            <span class="ing-meta">{{ ing.category }}</span>
-          </div>
-        </div>
-        <div v-if="selectedIngredient" class="form-row" style="margin-top:12px">
-          <div class="form-group">
-            <label>Quantity</label>
-            <input class="form-control" type="number" v-model="ingQuantity" min="0.1" step="0.1" />
-          </div>
-          <div class="form-group">
-            <label>Unit</label>
-            <input class="form-control" v-model="ingUnit" />
-          </div>
-        </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:8px" @click="addFromIngredient" :disabled="!selectedIngredient">
-          Add {{ selectedIngredient?.name || 'Selected' }}
-        </button>
-      </div>
+          <!-- From Ingredients Tab -->
+          <v-tabs-window-item value="ingredient">
+            <v-text-field v-model="ingredientSearch" label="Search ingredients..." variant="outlined" density="compact" prepend-inner-icon="mdi-magnify" class="mb-2" />
+            <v-list density="compact" max-height="200" class="border rounded mb-2" style="overflow-y:auto">
+              <v-list-item
+                v-for="ing in filteredIngredients"
+                :key="ing.id"
+                :title="ing.name"
+                :subtitle="ing.category"
+                :active="selectedIngredient?.id === ing.id"
+                active-color="primary"
+                @click="selectIngredient(ing)"
+              />
+            </v-list>
+            <v-row v-if="selectedIngredient" dense class="mt-2">
+              <v-col cols="6">
+                <v-text-field v-model="ingQuantity" label="Quantity" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
+              </v-col>
+              <v-col cols="6">
+                <v-text-field v-model="ingUnit" label="Unit" variant="outlined" density="compact" />
+              </v-col>
+            </v-row>
+            <v-btn color="primary" block @click="addFromIngredient" :disabled="!selectedIngredient">
+              Add {{ selectedIngredient?.name || 'Selected' }}
+            </v-btn>
+          </v-tabs-window-item>
 
-      <!-- From Recipe Tab -->
-      <div v-if="activeTab === 'recipe'" class="tab-content">
-        <div class="recipe-list">
-          <div
-            v-for="recipe in recipes"
-            :key="recipe.id"
-            :class="['recipe-option', { selected: selectedRecipe?.id === recipe.id }]"
-            @click="selectedRecipe = recipe"
-          >
-            <span class="recipe-name">{{ recipe.name }}</span>
-            <span class="recipe-meta">{{ recipe.ingredients.length }} ingredients</span>
-          </div>
-        </div>
-        <div v-if="selectedRecipe" class="recipe-preview">
-          <h4>Ingredients:</h4>
-          <ul>
-            <li v-for="ing in selectedRecipe.ingredients" :key="ing.ingredientId">
-              {{ ing.quantity }} {{ ing.unit }} {{ ing.name }}
-            </li>
-          </ul>
-        </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:12px" @click="addFromRecipe" :disabled="!selectedRecipe">
-          Add All Ingredients
-        </button>
-      </div>
-    </div>
-  </div>
+          <!-- From Recipe Tab -->
+          <v-tabs-window-item value="recipe">
+            <v-list density="compact" max-height="200" class="border rounded mb-3" style="overflow-y:auto">
+              <v-list-item
+                v-for="recipe in recipes"
+                :key="recipe.id"
+                :title="recipe.name"
+                :subtitle="recipe.ingredients.length + ' ingredients'"
+                :active="selectedRecipe?.id === recipe.id"
+                active-color="primary"
+                @click="selectedRecipe = recipe"
+              />
+            </v-list>
+            <v-card v-if="selectedRecipe" variant="tonal" color="primary" class="mb-3 pa-3">
+              <p class="text-caption font-weight-bold mb-1">Ingredients:</p>
+              <p v-for="ing in selectedRecipe.ingredients" :key="ing.ingredientId" class="text-caption">
+                {{ ing.quantity }} {{ ing.unit }} {{ ing.name }}
+              </p>
+            </v-card>
+            <v-btn color="primary" block @click="addFromRecipe" :disabled="!selectedRecipe">Add All Ingredients</v-btn>
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -146,95 +139,3 @@ function addFromRecipe() {
 }
 </script>
 
-<style scoped>
-.tab-bar {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 16px;
-  gap: 4px;
-}
-
-.tab-btn {
-  padding: 8px 14px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  margin-bottom: -1px;
-}
-
-.tab-btn.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-  font-weight: 600;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.ingredient-list, .recipe-list {
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.ingredient-option, .recipe-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
-}
-
-.ingredient-option:last-child, .recipe-option:last-child {
-  border-bottom: none;
-}
-
-.ingredient-option:hover, .recipe-option:hover {
-  background: var(--background);
-}
-
-.ingredient-option.selected, .recipe-option.selected {
-  background: var(--primary-light);
-}
-
-.ing-name, .recipe-name {
-  font-weight: 500;
-}
-
-.ing-meta, .recipe-meta {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.recipe-preview {
-  background: var(--background);
-  border-radius: var(--radius-sm);
-  padding: 12px;
-  margin-top: 10px;
-}
-
-.recipe-preview h4 {
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-  color: var(--text-secondary);
-}
-
-.recipe-preview ul {
-  list-style: none;
-  font-size: 0.9rem;
-}
-
-.recipe-preview li {
-  padding: 2px 0;
-}
-</style>

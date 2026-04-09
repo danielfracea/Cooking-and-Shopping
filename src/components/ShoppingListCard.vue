@@ -1,17 +1,23 @@
 <template>
-  <div class="list-card card" @click="$emit('open', list)">
-    <div class="card-header">
-      <h3 class="list-name">{{ list.name }}</h3>
-      <button class="btn btn-danger btn-sm" @click.stop="$emit('delete', list.id)">🗑</button>
-    </div>
-    <div class="card-meta">
-      <span class="badge badge-green">{{ checkedCount }}/{{ list.items.length }} items</span>
-      <span class="card-date">{{ formatDate(list.createdAt) }}</span>
-    </div>
-    <div class="progress-bar" v-if="list.items.length > 0">
-      <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
-    </div>
-  </div>
+  <v-card hover @click="$emit('open', list)" :ripple="true">
+    <v-card-title class="d-flex align-center justify-space-between pb-1">
+      <span class="text-subtitle-1 font-weight-semibold">{{ list.name }}</span>
+      <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click.stop="$emit('delete', list.id)" />
+    </v-card-title>
+    <v-card-text class="pt-1">
+      <div class="d-flex align-center justify-space-between mb-3">
+        <v-chip color="primary" size="small" variant="tonal">{{ checkedCount }}/{{ list.items.length }} items</v-chip>
+        <span class="text-caption text-medium-emphasis">{{ formatDate(list.createdAt) }}</span>
+      </div>
+      <v-progress-linear
+        v-if="list.items.length > 0"
+        :model-value="progressPercent"
+        color="primary"
+        rounded
+        height="6"
+      />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>
@@ -30,52 +36,3 @@ function formatDate(iso) {
 }
 </script>
 
-<style scoped>
-.list-card {
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.list-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.list-name {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.card-date {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.progress-bar {
-  height: 6px;
-  background: var(--border);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--primary);
-  border-radius: 3px;
-  transition: width 0.3s;
-}
-</style>

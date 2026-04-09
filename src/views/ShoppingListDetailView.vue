@@ -1,42 +1,76 @@
 <template>
   <div>
-    <div v-if="!list" class="empty-state">
-      <p>List not found</p>
-      <RouterLink to="/shopping-lists" class="btn btn-secondary">Back to Lists</RouterLink>
-    </div>
+    <v-empty-state v-if="!list" icon="mdi-alert-circle-outline" title="List not found">
+      <template #actions>
+        <v-btn :to="'/shopping-lists'" variant="outlined">Back to Lists</v-btn>
+      </template>
+    </v-empty-state>
+
     <div v-else>
-      <div class="page-header">
-        <div style="display:flex;align-items:center;gap:12px">
-          <RouterLink to="/shopping-lists" class="btn btn-secondary btn-sm">← Back</RouterLink>
-          <h1 class="page-title">{{ list.name }}</h1>
+      <div class="d-flex align-center justify-space-between mb-4 flex-wrap ga-3">
+        <div class="d-flex align-center ga-3">
+          <v-btn :to="'/shopping-lists'" variant="outlined" size="small" prepend-icon="mdi-arrow-left">Back</v-btn>
+          <h1 class="text-h5 font-weight-bold">{{ list.name }}</h1>
         </div>
-        <button class="btn btn-primary" @click="showAddItem = true">+ Add Item</button>
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddItem = true">Add Item</v-btn>
       </div>
-      <div class="list-stats card" style="margin-bottom:20px">
-        <span class="badge badge-green">{{ checkedCount }}/{{ list.items.length }} items</span>
-        <div class="progress-bar" style="margin-top:8px" v-if="list.items.length > 0">
-          <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
-        </div>
-      </div>
-      <div v-if="list.items.length === 0" class="empty-state">
-        <div class="icon">📝</div>
-        <p>No items yet</p>
-        <button class="btn btn-primary" @click="showAddItem = true">Add Your First Item</button>
-      </div>
-      <div v-else class="items-list">
-        <div v-for="item in list.items" :key="item.id" :class="['item-row', { checked: item.checked }]">
-          <button class="check-btn" @click="toggleItem(item.id)">{{ item.checked ? '✅' : '⬜' }}</button>
-          <div class="item-info">
-            <span class="item-name">{{ item.name }}</span>
-            <span class="item-qty" v-if="item.quantity || item.unit">{{ item.quantity }} {{ item.unit }}</span>
+
+      <v-card class="mb-4">
+        <v-card-text>
+          <div class="d-flex align-center justify-space-between mb-2">
+            <v-chip color="primary" variant="tonal" size="small">{{ checkedCount }}/{{ list.items.length }} items</v-chip>
           </div>
-          <button class="btn btn-danger btn-sm" @click="removeItem(item.id)">🗑</button>
-        </div>
-      </div>
+          <v-progress-linear
+            v-if="list.items.length > 0"
+            :model-value="progressPercent"
+            color="primary"
+            rounded
+            height="8"
+          />
+        </v-card-text>
+      </v-card>
+
+      <v-empty-state
+        v-if="list.items.length === 0"
+        icon="mdi-clipboard-list-outline"
+        title="No items yet"
+        text="Add your first item to this list."
+      >
+        <template #actions>
+          <v-btn color="primary" @click="showAddItem = true">Add Your First Item</v-btn>
+        </template>
+      </v-empty-state>
+
+      <v-card v-else>
+        <v-list>
+          <v-list-item
+            v-for="item in list.items"
+            :key="item.id"
+            :class="{ 'text-decoration-line-through text-medium-emphasis': item.checked }"
+          >
+            <template #prepend>
+              <v-checkbox-btn
+                :model-value="item.checked"
+                color="primary"
+                @update:model-value="toggleItem(item.id)"
+              />
+            </template>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+            <v-list-item-subtitle v-if="item.quantity || item.unit">
+              {{ item.quantity }} {{ item.unit }}
+            </v-list-item-subtitle>
+            <template #append>
+              <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click="removeItem(item.id)" />
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
     </div>
+
     <AddItemModal v-if="showAddItem" @close="showAddItem = false" @add-item="addItem" @add-recipe-ingredients="addRecipeIngredients" />
   </div>
 </template>
+
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -53,16 +87,4 @@ function removeItem(itemId) { store.removeItemFromList(route.params.id, itemId) 
 function addItem(item) { store.addItemToList(route.params.id, item) }
 function addRecipeIngredients(ingredients) { store.addRecipeIngredientsToList(route.params.id, ingredients) }
 </script>
-<style scoped>
-.items-list { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
-.item-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); transition: background 0.2s; }
-.item-row:last-child { border-bottom: none; }
-.item-row.checked .item-name { text-decoration: line-through; color: var(--text-secondary); }
-.item-row.checked { background: #F9F9F9; }
-.check-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 0; line-height: 1; }
-.item-info { flex: 1; display: flex; flex-direction: column; }
-.item-name { font-weight: 500; }
-.item-qty { font-size: 0.8rem; color: var(--text-secondary); }
-.progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
-</style>
+
