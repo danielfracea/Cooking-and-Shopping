@@ -140,7 +140,7 @@ export default {
       title: 'Add New Recipe',
       name: 'Recipe Name *',
       description: 'Description',
-      category: 'Category',
+      tags: 'Tags',
       prepTime: 'Prep Time (min)',
       servings: 'Servings',
       cancel: 'Cancel',
