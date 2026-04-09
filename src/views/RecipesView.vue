@@ -137,19 +137,67 @@
             <v-col cols="12" sm="6">
               <p class="text-caption text-uppercase text-medium-emphasis mb-2">{{ t('recipes.detail.total') }}</p>
               <div class="d-flex flex-wrap ga-2">
-                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.total.calories }} {{ t('recipes.detail.kcal') }}</v-chip>
-                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.total.protein }}g {{ t('recipes.detail.protein') }}</v-chip>
-                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.total.carbs }}g {{ t('recipes.detail.carbs') }}</v-chip>
-                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.total.fat }}g {{ t('recipes.detail.fat') }}</v-chip>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-orange-lighten-4 d-flex align-center ga-2">
+                  <v-icon size="18" color="deep-orange-darken-1">mdi-fire</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.calories }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.kcal') }}</div>
+                  </div>
+                </div>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-red-lighten-4 d-flex align-center ga-2">
+                  <v-icon size="18" color="red-darken-1">mdi-arm-flex</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.protein }}g</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.protein') }}</div>
+                  </div>
+                </div>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-yellow-lighten-3 d-flex align-center ga-2">
+                  <v-icon size="18" color="amber-darken-2">mdi-grain</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.carbs }}g</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.carbs') }}</div>
+                  </div>
+                </div>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-blue-lighten-4 d-flex align-center ga-2">
+                  <v-icon size="18" color="blue-darken-1">mdi-water</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.fat }}g</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.fat') }}</div>
+                  </div>
+                </div>
               </div>
             </v-col>
             <v-col cols="12" sm="6">
               <p class="text-caption text-uppercase text-medium-emphasis mb-2">{{ t('recipes.detail.perServing', { n: selectedRecipe.servings }) }}</p>
               <div class="d-flex flex-wrap ga-2">
-                <v-chip color="orange-lighten-4" size="small" prepend-icon="mdi-fire">{{ recipeNutrition.perServing.calories }} {{ t('recipes.detail.kcal') }}</v-chip>
-                <v-chip color="red-lighten-4" size="small" prepend-icon="mdi-arm-flex">{{ recipeNutrition.perServing.protein }}g {{ t('recipes.detail.protein') }}</v-chip>
-                <v-chip color="yellow-lighten-3" size="small" prepend-icon="mdi-grain">{{ recipeNutrition.perServing.carbs }}g {{ t('recipes.detail.carbs') }}</v-chip>
-                <v-chip color="blue-lighten-4" size="small" prepend-icon="mdi-water">{{ recipeNutrition.perServing.fat }}g {{ t('recipes.detail.fat') }}</v-chip>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-orange-lighten-4 d-flex align-center ga-2">
+                  <v-icon size="18" color="deep-orange-darken-1">mdi-fire</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.calories }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.kcal') }}</div>
+                  </div>
+                </div>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-red-lighten-4 d-flex align-center ga-2">
+                  <v-icon size="18" color="red-darken-1">mdi-arm-flex</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.protein }}g</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.protein') }}</div>
+                  </div>
+                </div>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-yellow-lighten-3 d-flex align-center ga-2">
+                  <v-icon size="18" color="amber-darken-2">mdi-grain</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.carbs }}g</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.carbs') }}</div>
+                  </div>
+                </div>
+                <div class="nutrition-stat rounded-lg px-3 py-2 bg-blue-lighten-4 d-flex align-center ga-2">
+                  <v-icon size="18" color="blue-darken-1">mdi-water</v-icon>
+                  <div>
+                    <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.fat }}g</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.fat') }}</div>
+                  </div>
+                </div>
               </div>
             </v-col>
           </v-row>
@@ -384,3 +432,12 @@ function removeStep(index) {
   selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
 }
 </script>
+
+<style scoped>
+.nutrition-stat__label {
+  font-size: 0.65rem;
+  line-height: 1;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+</style>
