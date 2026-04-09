@@ -5,6 +5,18 @@ import { saveCollectionAsJson, loadCollectionAsJson, isFirebaseConfigured } from
 const STORAGE_KEY = 'cooking_recipes'
 const FIRESTORE_KEY = 'recipes'
 
+export const RECIPE_CATEGORIES = [
+  'Breakfast',
+  'Salad',
+  'Soup',
+  'Main Course',
+  'Italian',
+  'Healthy',
+  'Dessert',
+  'Snack',
+  'Other',
+]
+
 const DEFAULT_RECIPES = [
   {
     id: '1',
@@ -33,7 +45,7 @@ const DEFAULT_RECIPES = [
     description: 'Healthy chicken and rice with vegetables',
     servings: 2,
     prepTime: 40,
-    category: 'Healthy',
+    category: 'Main Course',
     ingredients: [
       { ingredientId: '1', name: 'Chicken Breast', quantity: 0.4, unit: 'kg' },
       { ingredientId: '7', name: 'Rice', quantity: 0.2, unit: 'kg' },
@@ -65,6 +77,38 @@ const DEFAULT_RECIPES = [
       { id: 's3-2', title: 'Infuse the Oil', description: 'Gently heat olive oil in a large pan over low heat. Add thinly sliced garlic and cook until lightly golden, about 3 minutes.' },
       { id: 's3-3', title: 'Combine', description: 'Add drained pasta to the pan with a splash of pasta water. Toss well to coat every strand in the garlic oil.' },
       { id: 's3-4', title: 'Serve', description: 'Plate immediately and finish with a drizzle of extra olive oil and fresh parsley if available.' },
+    ],
+  },
+  {
+    id: '4',
+    name: 'Greek Salad',
+    description: 'Classic Mediterranean salad with feta and olives',
+    servings: 2,
+    prepTime: 15,
+    category: 'Salad',
+    ingredients: [
+      { ingredientId: '3', name: 'Tomato', quantity: 0.3, unit: 'kg' },
+      { ingredientId: '4', name: 'Olive Oil', quantity: 0.03, unit: 'L' },
+    ],
+    steps: [
+      { id: 's4-1', title: 'Chop the Vegetables', description: 'Cut tomatoes and cucumber into chunks. Slice the red onion thinly.' },
+      { id: 's4-2', title: 'Combine', description: 'Toss tomatoes, cucumber, onion, and olives together in a large bowl.' },
+      { id: 's4-3', title: 'Dress & Serve', description: 'Drizzle with olive oil, season with salt and oregano, then top with cubed feta cheese.' },
+    ],
+  },
+  {
+    id: '5',
+    name: 'Chocolate Mousse',
+    description: 'Light and fluffy chocolate dessert',
+    servings: 4,
+    prepTime: 20,
+    category: 'Dessert',
+    ingredients: [],
+    steps: [
+      { id: 's5-1', title: 'Melt the Chocolate', description: 'Break dark chocolate into pieces and melt over a bain-marie. Let it cool slightly.' },
+      { id: 's5-2', title: 'Whip the Cream', description: 'Whip the heavy cream to soft peaks in a chilled bowl.' },
+      { id: 's5-3', title: 'Fold Together', description: 'Gently fold the melted chocolate into the whipped cream until just combined. Do not overmix.' },
+      { id: 's5-4', title: 'Chill & Serve', description: 'Divide into serving glasses and refrigerate for at least 1 hour before serving.' },
     ],
   },
 ]
