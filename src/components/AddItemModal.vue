@@ -121,9 +121,12 @@ const manualItemName = computed(() => {
 })
 
 function onManualSelectionChange(val) {
-  // When an existing ingredient is selected, pre-fill its unit
+  // When an existing ingredient is selected, pre-fill its unit;
+  // when the user clears or types free text, reset the unit.
   if (val && typeof val === 'object') {
     manualItem.value.unit = val.unit || ''
+  } else {
+    manualItem.value.unit = ''
   }
 }
 
