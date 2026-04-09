@@ -1,26 +1,22 @@
 <template>
-  <div class="recipe-card card" @click="$emit('view', recipe)">
-    <div class="recipe-header">
-      <h3 class="recipe-name">{{ recipe.name }}</h3>
-      <span class="tag">{{ recipe.category }}</span>
-    </div>
-    <p class="recipe-desc">{{ recipe.description }}</p>
-    <div class="recipe-meta">
-      <span>⏱ {{ recipe.prepTime }} min</span>
-      <span>👤 {{ recipe.servings }} servings</span>
-      <span>🥗 {{ recipe.ingredients.length }} ingredients</span>
-    </div>
-  </div>
+  <v-card hover @click="$emit('view', recipe)" :ripple="true">
+    <v-card-title class="d-flex align-start justify-space-between ga-2 flex-wrap pb-1">
+      <span class="text-subtitle-1 font-weight-semibold">{{ recipe.name }}</span>
+      <v-chip v-if="recipe.category" size="x-small" color="blue-lighten-4" text-color="blue-darken-3">{{ recipe.category }}</v-chip>
+    </v-card-title>
+    <v-card-text class="pt-1">
+      <p v-if="recipe.description" class="text-body-2 text-medium-emphasis mb-3">{{ recipe.description }}</p>
+      <div class="d-flex flex-wrap ga-3 text-caption text-medium-emphasis">
+        <span><v-icon size="14" class="mr-1">mdi-clock-outline</v-icon>{{ recipe.prepTime }} min</span>
+        <span><v-icon size="14" class="mr-1">mdi-account-outline</v-icon>{{ recipe.servings }} servings</span>
+        <span><v-icon size="14" class="mr-1">mdi-food-variant</v-icon>{{ recipe.ingredients.length }} ingredients</span>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
+
 <script setup>
 defineProps({ recipe: Object })
 defineEmits(['view'])
 </script>
-<style scoped>
-.recipe-card { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-.recipe-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
-.recipe-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
-.recipe-name { font-size: 1.1rem; font-weight: 600; }
-.recipe-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px; }
-.recipe-meta { display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-secondary); }
-</style>
+

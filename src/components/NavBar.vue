@@ -1,81 +1,33 @@
 <template>
-  <nav class="navbar">
-    <div class="navbar-brand">
-      <span class="brand-icon">🍳</span>
-      <span class="brand-name">Cook &amp; Shop</span>
-    </div>
-    <div class="navbar-links">
-      <RouterLink to="/shopping-lists" class="nav-link">
-        <span>🛒</span> Shopping Lists
-      </RouterLink>
-      <RouterLink to="/ingredients" class="nav-link">
-        <span>🥦</span> Ingredients
-      </RouterLink>
-      <RouterLink to="/recipes" class="nav-link">
-        <span>📖</span> Recipes
-      </RouterLink>
-    </div>
-  </nav>
+  <v-app-bar color="surface" elevation="2">
+    <v-app-bar-nav-icon class="d-sm-none" @click="drawer = !drawer" />
+    <v-app-bar-title>
+      <span class="text-h6 font-weight-bold text-primary d-flex align-center ga-2">
+        <span>🍳</span> Cook &amp; Shop
+      </span>
+    </v-app-bar-title>
+    <template #append>
+      <div class="d-none d-sm-flex ga-1 mr-2">
+        <v-btn :to="'/shopping-lists'" variant="text" prepend-icon="mdi-cart" rounded="lg">Shopping Lists</v-btn>
+        <v-btn :to="'/ingredients'" variant="text" prepend-icon="mdi-food-apple" rounded="lg">Ingredients</v-btn>
+        <v-btn :to="'/recipes'" variant="text" prepend-icon="mdi-book-open-variant" rounded="lg">Recipes</v-btn>
+      </div>
+    </template>
+  </v-app-bar>
+
+  <v-navigation-drawer v-model="drawer" temporary>
+    <v-list-item title="Cook &amp; Shop" prepend-icon="mdi-pot-steam" nav />
+    <v-divider />
+    <v-list density="compact" nav>
+      <v-list-item :to="'/shopping-lists'" prepend-icon="mdi-cart" title="Shopping Lists" @click="drawer = false" />
+      <v-list-item :to="'/ingredients'" prepend-icon="mdi-food-apple" title="Ingredients" @click="drawer = false" />
+      <v-list-item :to="'/recipes'" prepend-icon="mdi-book-open-variant" title="Recipes" @click="drawer = false" />
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
-<style scoped>
-.navbar {
-  background: white;
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  height: 64px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+<script setup>
+import { ref } from 'vue'
+const drawer = ref(false)
+</script>
 
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.brand-icon {
-  font-size: 1.8rem;
-}
-
-.brand-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
-.navbar-links {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.2s;
-}
-
-.nav-link:hover {
-  background: var(--background);
-  color: var(--text-primary);
-}
-
-.nav-link.router-link-active {
-  background: var(--primary-light);
-  color: var(--primary-dark);
-}
-</style>

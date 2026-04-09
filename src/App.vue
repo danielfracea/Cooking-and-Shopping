@@ -1,12 +1,15 @@
 <template>
-  <div class="app">
+  <v-app>
     <NavBar />
-    <main class="main-content">
-      <RouterView />
-    </main>
-  </div>
+    <v-main>
+      <v-container class="py-6">
+        <RouterView />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
 import NavBar from './components/NavBar.vue'
 </script>
+
