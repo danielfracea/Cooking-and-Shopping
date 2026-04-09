@@ -18,24 +18,24 @@
       </v-empty-state>
 
       <template v-else>
-        <!-- Category filter -->
+        <!-- Tag filter -->
         <div class="d-flex flex-wrap ga-2 mb-4">
           <v-chip
-            v-for="cat in availableCategories"
-            :key="cat"
-            :color="selectedCategory === cat ? 'primary' : undefined"
-            :variant="selectedCategory === cat ? 'flat' : 'outlined'"
+            v-for="tag in availableTags"
+            :key="tag"
+            :color="selectedTag === tag ? 'primary' : undefined"
+            :variant="selectedTag === tag ? 'flat' : 'outlined'"
             size="small"
             clickable
-            @click="selectedCategory = cat"
-          >{{ cat }}</v-chip>
+            @click="selectedTag = tag"
+          >{{ tag }}</v-chip>
         </div>
 
         <v-empty-state
           v-if="filteredRecipes.length === 0"
           icon="mdi-filter-outline"
-          title="No recipes in this category"
-          text="Try a different category or add a new recipe."
+          title="No recipes with this tag"
+          text="Try a different tag or add a new recipe."
         />
 
         <v-row v-else>
@@ -52,7 +52,7 @@
         <div class="d-flex align-center ga-3 flex-wrap">
           <v-btn variant="outlined" size="small" prepend-icon="mdi-arrow-left" @click="selectedRecipe = null">{{ t('recipes.detail.back') }}</v-btn>
           <h2 class="text-h5 font-weight-bold">{{ selectedRecipe.name }}</h2>
-          <v-chip v-if="selectedRecipe.category" size="small" color="blue-lighten-4" text-color="blue-darken-3">{{ selectedRecipe.category }}</v-chip>
+          <v-chip v-for="tag in (selectedRecipe.tags || [])" :key="tag" size="small" color="blue-lighten-4" text-color="blue-darken-3">{{ tag }}</v-chip>
         </div>
         <div class="d-flex ga-2">
           <v-btn
@@ -247,9 +247,21 @@
           <v-text-field v-model="newRecipe.name" :label="t('recipes.addDialog.name')" variant="outlined" density="compact" :placeholder="t('recipes.addDialog.placeholder.name')" class="mb-2" />
           <v-text-field v-model="newRecipe.description" :label="t('recipes.addDialog.description')" variant="outlined" density="compact" class="mb-2" />
           <v-row dense>
-            <v-col cols="12" sm="4"><v-text-field v-model="newRecipe.category" :label="t('recipes.addDialog.category')" variant="outlined" density="compact" /></v-col>
-            <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.prepTime" :label="t('recipes.addDialog.prepTime')" type="number" variant="outlined" density="compact" min="0" /></v-col>
-            <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.servings" :label="t('recipes.addDialog.servings')" type="number" variant="outlined" density="compact" min="1" /></v-col>
+            <v-col cols="12">
+              <v-combobox
+                v-model="newRecipe.tags"
+                :items="RECIPE_TAGS"
+                :label="t('recipes.addDialog.tags')"
+                variant="outlined"
+                density="compact"
+                multiple
+                chips
+                closable-chips
+                class="mb-2"
+              />
+            </v-col>
+            <v-col cols="6" sm="6"><v-text-field v-model="newRecipe.prepTime" :label="t('recipes.addDialog.prepTime')" type="number" variant="outlined" density="compact" min="0" /></v-col>
+            <v-col cols="6" sm="6"><v-text-field v-model="newRecipe.servings" :label="t('recipes.addDialog.servings')" type="number" variant="outlined" density="compact" min="1" /></v-col>
           </v-row>
         </v-card-text>
         <v-card-actions class="px-4 pb-4">
@@ -305,7 +317,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRecipesStore, RECIPE_CATEGORIES } from '../stores/recipes'
+import { useRecipesStore, RECIPE_TAGS } from '../stores/recipes'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
 import RecipeCard from '../components/RecipeCard.vue'
@@ -319,18 +331,18 @@ const ingredientsStore = useIngredientsStore()
 const recipes = computed(() => recipesStore.recipes)
 const shoppingLists = computed(() => listsStore.lists)
 
-const selectedCategory = ref('All')
+const selectedTag = ref('All')
 
 const filteredRecipes = computed(() => {
-  if (selectedCategory.value === 'All') return recipes.value
-  return recipes.value.filter(r => r.category === selectedCategory.value)
+  if (selectedTag.value === 'All') return recipes.value
+  return recipes.value.filter(r => (r.tags || []).includes(selectedTag.value))
 })
 
-const availableCategories = computed(() => {
-  const usedCategories = new Set(recipes.value.map(r => r.category).filter(Boolean))
-  const predefinedUsed = RECIPE_CATEGORIES.filter(c => usedCategories.has(c))
-  const customCategories = [...usedCategories].filter(c => !RECIPE_CATEGORIES.includes(c))
-  return ['All', ...predefinedUsed, ...customCategories]
+const availableTags = computed(() => {
+  const usedTags = new Set(recipes.value.flatMap(r => r.tags || []))
+  const predefinedUsed = RECIPE_TAGS.filter(t => usedTags.has(t))
+  const customTags = [...usedTags].filter(t => !RECIPE_TAGS.includes(t))
+  return ['All', ...predefinedUsed, ...customTags]
 })
 
 const recipeNutrition = computed(() => {
@@ -365,7 +377,7 @@ const showAddRecipe = ref(false)
 const showWizard = ref(false)
 const showAddStep = ref(false)
 
-const newRecipe = ref({ name: '', description: '', category: '', prepTime: 30, servings: 4 })
+const newRecipe = ref({ name: '', description: '', tags: [], prepTime: 30, servings: 4 })
 const newStep = ref({ title: '', description: '' })
 
 function viewRecipe(recipe) {
@@ -397,7 +409,7 @@ function deleteRecipe(id) {
 }
 
 function openAddRecipe() {
-  newRecipe.value = { name: '', description: '', category: '', prepTime: 30, servings: 4 }
+  newRecipe.value = { name: '', description: '', tags: [], prepTime: 30, servings: 4 }
   showAddRecipe.value = true
 }
 
