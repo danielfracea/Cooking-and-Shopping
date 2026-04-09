@@ -33,16 +33,41 @@
         </v-card-text>
       </v-card>
 
+      <v-card class="mb-4 pa-3">
+        <v-row dense align="center">
+          <v-col>
+            <v-combobox
+              v-model="quickAddSelection"
+              :items="ingredientsStore.ingredients"
+              item-title="name"
+              return-object
+              label="Quick add item…"
+              variant="outlined"
+              density="compact"
+              hide-details
+              clearable
+              prepend-inner-icon="mdi-magnify"
+              @update:model-value="onQuickAddSelectionChange"
+              @keyup.enter="submitQuickAdd"
+            />
+          </v-col>
+          <v-col cols="auto">
+            <v-btn
+              color="primary"
+              icon="mdi-plus"
+              :disabled="!quickAddName.trim()"
+              @click="submitQuickAdd"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+
       <v-empty-state
         v-if="list.items.length === 0"
         icon="mdi-clipboard-list-outline"
         title="No items yet"
         text="Add your first item to this list."
-      >
-        <template #actions>
-          <v-btn color="primary" @click="showAddItem = true">Add Your First Item</v-btn>
-        </template>
-      </v-empty-state>
+      />
 
       <v-card v-else>
         <v-list>
@@ -82,9 +107,11 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useShoppingListsStore } from '../stores/shoppingLists'
+import { useIngredientsStore } from '../stores/ingredients'
 import AddItemModal from '../components/AddItemModal.vue'
 const route = useRoute()
 const store = useShoppingListsStore()
+const ingredientsStore = useIngredientsStore()
 const showAddItem = ref(false)
 const shareCopied = ref(false)
 const list = computed(() => store.getList(route.params.id))
@@ -94,6 +121,32 @@ function toggleItem(itemId) { store.toggleItem(route.params.id, itemId) }
 function removeItem(itemId) { store.removeItemFromList(route.params.id, itemId) }
 function addItem(item) { store.addItemToList(route.params.id, item) }
 function addRecipeIngredients(ingredients) { store.addRecipeIngredientsToList(route.params.id, ingredients) }
+
+// Quick-add inline input
+const quickAddSelection = ref(null)
+const quickAddUnit = ref('')
+const quickAddName = computed(() => {
+  if (!quickAddSelection.value) return ''
+  if (typeof quickAddSelection.value === 'string') return quickAddSelection.value
+  return quickAddSelection.value.name
+})
+function onQuickAddSelectionChange(val) {
+  quickAddUnit.value = (val && typeof val === 'object') ? (val.unit || '') : ''
+}
+function submitQuickAdd() {
+  const name = quickAddName.value.trim()
+  if (!name) return
+  const matched = ingredientsStore.ingredients.find(i => i.name.toLowerCase() === name.toLowerCase())
+  const item = {
+    name: matched ? matched.name : name,
+    quantity: 1,
+    unit: quickAddUnit.value || (matched?.unit ?? ''),
+  }
+  if (matched) item.ingredientId = matched.id
+  store.addItemToList(route.params.id, item)
+  quickAddSelection.value = null
+  quickAddUnit.value = ''
+}
 async function shareList() {
   const url = store.generateShareUrl(route.params.id)
   if (!url) return
