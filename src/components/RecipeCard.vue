@@ -6,17 +6,38 @@
     </v-card-title>
     <v-card-text class="pt-1">
       <p v-if="recipe.description" class="text-body-2 text-medium-emphasis mb-3">{{ recipe.description }}</p>
-      <div class="d-flex flex-wrap ga-3 text-caption text-medium-emphasis">
+      <div class="d-flex flex-wrap ga-3 text-caption text-medium-emphasis mb-2">
         <span><v-icon size="14" class="mr-1">mdi-clock-outline</v-icon>{{ recipe.prepTime }} min</span>
         <span><v-icon size="14" class="mr-1">mdi-account-outline</v-icon>{{ recipe.servings }} servings</span>
         <span><v-icon size="14" class="mr-1">mdi-food-variant</v-icon>{{ recipe.ingredients.length }} ingredients</span>
+      </div>
+      <div v-if="nutrition.calories > 0" class="d-flex flex-wrap ga-2 text-caption">
+        <v-chip size="x-small" color="orange-lighten-4" prepend-icon="mdi-fire">{{ nutrition.calories }} kcal</v-chip>
+        <v-chip size="x-small" color="red-lighten-4" prepend-icon="mdi-arm-flex">{{ nutrition.protein }}g protein</v-chip>
       </div>
     </v-card-text>
   </v-card>
 </template>
 
 <script setup>
-defineProps({ recipe: Object })
+import { computed } from 'vue'
+import { useIngredientsStore } from '../stores/ingredients'
+
+const props = defineProps({ recipe: Object })
 defineEmits(['view'])
+
+const ingredientsStore = useIngredientsStore()
+
+const nutrition = computed(() => {
+  let calories = 0, protein = 0
+  for (const ing of props.recipe.ingredients) {
+    const data = ingredientsStore.getIngredient(ing.ingredientId)
+    if (data) {
+      calories += (data.calories || 0) * ing.quantity
+      protein += (data.protein || 0) * ing.quantity
+    }
+  }
+  return { calories: Math.round(calories), protein: Math.round(protein) }
+})
 </script>
 
