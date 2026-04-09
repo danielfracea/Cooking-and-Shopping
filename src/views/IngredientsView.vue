@@ -48,7 +48,7 @@
           <tr v-for="ing in filteredIngredients" :key="ing.id">
             <td><strong>{{ ing.name }}</strong></td>
             <td><v-chip size="x-small" color="blue-lighten-4" text-color="blue-darken-3">{{ ing.category }}</v-chip></td>
-            <td>${{ ing.price }}/{{ ing.unit }}</td>
+            <td>{{ ing.price }} RON/{{ ing.unit }}</td>
             <td>{{ ing.calories }} kcal</td>
             <td>{{ ing.protein }}g</td>
             <td>{{ ing.carbs }}g</td>
@@ -72,7 +72,7 @@
           </v-card-title>
           <v-card-text class="pt-1">
             <v-row dense class="text-caption text-medium-emphasis">
-              <v-col cols="6">💰 ${{ ing.price }}/{{ ing.unit }}</v-col>
+              <v-col cols="6">💰 {{ ing.price }} RON/{{ ing.unit }}</v-col>
               <v-col cols="6">🔥 {{ ing.calories }} kcal</v-col>
               <v-col cols="4">P: {{ ing.protein }}g</v-col>
               <v-col cols="4">C: {{ ing.carbs }}g</v-col>
@@ -100,7 +100,7 @@
           <v-row dense>
             <v-col cols="6"><v-text-field v-model="form.category" label="Category" variant="outlined" density="compact" /></v-col>
             <v-col cols="6"><v-text-field v-model="form.unit" label="Unit" variant="outlined" density="compact" /></v-col>
-            <v-col cols="6"><v-text-field v-model="form.price" label="Price ($)" type="number" variant="outlined" density="compact" min="0" step="0.01" /></v-col>
+            <v-col cols="6"><v-text-field v-model="form.price" label="Price (RON)" type="number" variant="outlined" density="compact" min="0" step="0.01" /></v-col>
             <v-col cols="6"><v-text-field v-model="form.calories" label="Calories" type="number" variant="outlined" density="compact" min="0" /></v-col>
             <v-col cols="4"><v-text-field v-model="form.protein" label="Protein (g)" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
             <v-col cols="4"><v-text-field v-model="form.carbs" label="Carbs (g)" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>

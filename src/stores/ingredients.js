@@ -6,14 +6,14 @@ const STORAGE_KEY = 'cooking_ingredients'
 const FIRESTORE_KEY = 'ingredients'
 
 const DEFAULT_INGREDIENTS = [
-  { id: '1', name: 'Chicken Breast', price: 5.99, unit: 'kg', calories: 165, protein: 31, carbs: 0, fat: 3.6, category: 'Meat' },
-  { id: '2', name: 'Pasta', price: 1.49, unit: 'kg', calories: 371, protein: 13, carbs: 74, fat: 1.5, category: 'Grains' },
-  { id: '3', name: 'Tomato', price: 2.99, unit: 'kg', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, category: 'Vegetables' },
-  { id: '4', name: 'Olive Oil', price: 7.99, unit: 'L', calories: 884, protein: 0, carbs: 0, fat: 100, category: 'Oils' },
-  { id: '5', name: 'Garlic', price: 1.99, unit: 'kg', calories: 149, protein: 6.4, carbs: 33, fat: 0.5, category: 'Vegetables' },
-  { id: '6', name: 'Onion', price: 0.99, unit: 'kg', calories: 40, protein: 1.1, carbs: 9.3, fat: 0.1, category: 'Vegetables' },
-  { id: '7', name: 'Rice', price: 1.29, unit: 'kg', calories: 365, protein: 7.1, carbs: 79, fat: 0.7, category: 'Grains' },
-  { id: '8', name: 'Eggs', price: 3.49, unit: 'dozen', calories: 155, protein: 13, carbs: 1.1, fat: 11, category: 'Dairy' },
+  { id: '1', name: 'Chicken Breast', price: 28.99, unit: 'kg', calories: 165, protein: 31, carbs: 0, fat: 3.6, category: 'Meat' },
+  { id: '2', name: 'Pasta', price: 6.99, unit: 'kg', calories: 371, protein: 13, carbs: 74, fat: 1.5, category: 'Grains' },
+  { id: '3', name: 'Tomato', price: 9.99, unit: 'kg', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, category: 'Vegetables' },
+  { id: '4', name: 'Olive Oil', price: 39.99, unit: 'L', calories: 884, protein: 0, carbs: 0, fat: 100, category: 'Oils' },
+  { id: '5', name: 'Garlic', price: 9.99, unit: 'kg', calories: 149, protein: 6.4, carbs: 33, fat: 0.5, category: 'Vegetables' },
+  { id: '6', name: 'Onion', price: 3.99, unit: 'kg', calories: 40, protein: 1.1, carbs: 9.3, fat: 0.1, category: 'Vegetables' },
+  { id: '7', name: 'Rice', price: 5.99, unit: 'kg', calories: 365, protein: 7.1, carbs: 79, fat: 0.7, category: 'Grains' },
+  { id: '8', name: 'Eggs', price: 17.99, unit: 'dozen', calories: 155, protein: 13, carbs: 1.1, fat: 11, category: 'Dairy' },
 ]
 
 function loadFromStorage() {
