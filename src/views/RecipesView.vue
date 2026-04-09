@@ -17,11 +17,33 @@
         </template>
       </v-empty-state>
 
-      <v-row v-else>
-        <v-col v-for="recipe in recipes" :key="recipe.id" cols="12" sm="6" md="4">
-          <RecipeCard :recipe="recipe" @view="viewRecipe" />
-        </v-col>
-      </v-row>
+      <template v-else>
+        <!-- Category filter -->
+        <div class="d-flex flex-wrap ga-2 mb-4">
+          <v-chip
+            v-for="cat in availableCategories"
+            :key="cat"
+            :color="selectedCategory === cat ? 'primary' : undefined"
+            :variant="selectedCategory === cat ? 'flat' : 'outlined'"
+            size="small"
+            clickable
+            @click="selectedCategory = cat"
+          >{{ cat }}</v-chip>
+        </div>
+
+        <v-empty-state
+          v-if="filteredRecipes.length === 0"
+          icon="mdi-filter-outline"
+          title="No recipes in this category"
+          text="Try a different category or add a new recipe."
+        />
+
+        <v-row v-else>
+          <v-col v-for="recipe in filteredRecipes" :key="recipe.id" cols="12" sm="6" md="4">
+            <RecipeCard :recipe="recipe" @view="viewRecipe" />
+          </v-col>
+        </v-row>
+      </template>
     </div>
 
     <!-- Recipe Detail -->
@@ -177,7 +199,16 @@
           <v-text-field v-model="newRecipe.name" label="Recipe Name *" variant="outlined" density="compact" placeholder="e.g. Spaghetti Bolognese" class="mb-2" />
           <v-text-field v-model="newRecipe.description" label="Description" variant="outlined" density="compact" class="mb-2" />
           <v-row dense>
-            <v-col cols="12" sm="4"><v-text-field v-model="newRecipe.category" label="Category" variant="outlined" density="compact" /></v-col>
+            <v-col cols="12" sm="4">
+              <v-combobox
+                v-model="newRecipe.category"
+                :items="RECIPE_CATEGORIES"
+                label="Category"
+                variant="outlined"
+                density="compact"
+                clearable
+              />
+            </v-col>
             <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.prepTime" label="Prep Time (min)" type="number" variant="outlined" density="compact" min="0" /></v-col>
             <v-col cols="6" sm="4"><v-text-field v-model="newRecipe.servings" label="Servings" type="number" variant="outlined" density="compact" min="1" /></v-col>
           </v-row>
@@ -234,7 +265,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRecipesStore } from '../stores/recipes'
+import { useRecipesStore, RECIPE_CATEGORIES } from '../stores/recipes'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
 import RecipeCard from '../components/RecipeCard.vue'
@@ -246,6 +277,20 @@ const ingredientsStore = useIngredientsStore()
 
 const recipes = computed(() => recipesStore.recipes)
 const shoppingLists = computed(() => listsStore.lists)
+
+const selectedCategory = ref('All')
+
+const filteredRecipes = computed(() => {
+  if (selectedCategory.value === 'All') return recipes.value
+  return recipes.value.filter(r => r.category === selectedCategory.value)
+})
+
+const availableCategories = computed(() => {
+  const usedCategories = new Set(recipes.value.map(r => r.category).filter(Boolean))
+  const predefinedUsed = RECIPE_CATEGORIES.filter(c => usedCategories.has(c))
+  const customCategories = [...usedCategories].filter(c => !RECIPE_CATEGORIES.includes(c))
+  return ['All', ...predefinedUsed, ...customCategories]
+})
 
 const recipeNutrition = computed(() => {
   const recipe = selectedRecipe.value
