@@ -17,11 +17,33 @@
         </template>
       </v-empty-state>
 
-      <v-row v-else>
-        <v-col v-for="recipe in recipes" :key="recipe.id" cols="12" sm="6" md="4">
-          <RecipeCard :recipe="recipe" @view="viewRecipe" />
-        </v-col>
-      </v-row>
+      <template v-else>
+        <!-- Category filter -->
+        <div class="d-flex flex-wrap ga-2 mb-4">
+          <v-chip
+            v-for="cat in availableCategories"
+            :key="cat"
+            :color="selectedCategory === cat ? 'primary' : undefined"
+            :variant="selectedCategory === cat ? 'flat' : 'outlined'"
+            size="small"
+            clickable
+            @click="selectedCategory = cat"
+          >{{ cat }}</v-chip>
+        </div>
+
+        <v-empty-state
+          v-if="filteredRecipes.length === 0"
+          icon="mdi-filter-outline"
+          title="No recipes in this category"
+          text="Try a different category or add a new recipe."
+        />
+
+        <v-row v-else>
+          <v-col v-for="recipe in filteredRecipes" :key="recipe.id" cols="12" sm="6" md="4">
+            <RecipeCard :recipe="recipe" @view="viewRecipe" />
+          </v-col>
+        </v-row>
+      </template>
     </div>
 
     <!-- Recipe Detail -->
@@ -235,7 +257,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRecipesStore } from '../stores/recipes'
+import { useRecipesStore, RECIPE_CATEGORIES } from '../stores/recipes'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
 import RecipeCard from '../components/RecipeCard.vue'
@@ -248,6 +270,20 @@ const ingredientsStore = useIngredientsStore()
 
 const recipes = computed(() => recipesStore.recipes)
 const shoppingLists = computed(() => listsStore.lists)
+
+const selectedCategory = ref('All')
+
+const filteredRecipes = computed(() => {
+  if (selectedCategory.value === 'All') return recipes.value
+  return recipes.value.filter(r => r.category === selectedCategory.value)
+})
+
+const availableCategories = computed(() => {
+  const usedCategories = new Set(recipes.value.map(r => r.category).filter(Boolean))
+  const predefinedUsed = RECIPE_CATEGORIES.filter(c => usedCategories.has(c))
+  const customCategories = [...usedCategories].filter(c => !RECIPE_CATEGORIES.includes(c))
+  return ['All', ...predefinedUsed, ...customCategories]
+})
 
 const recipeNutrition = computed(() => {
   const recipe = selectedRecipe.value
