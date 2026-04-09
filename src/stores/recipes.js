@@ -17,6 +17,13 @@ const DEFAULT_RECIPES = [
       { ingredientId: '4', name: 'Olive Oil', quantity: 0.05, unit: 'L' },
       { ingredientId: '5', name: 'Garlic', quantity: 0.02, unit: 'kg' },
     ],
+    steps: [
+      { id: 's1-1', title: 'Boil Water', description: 'Bring a large pot of salted water to a boil.' },
+      { id: 's1-2', title: 'Cook the Pasta', description: 'Add pasta and cook according to package instructions until al dente. Reserve ½ cup of pasta water.' },
+      { id: 's1-3', title: 'Prepare the Sauce', description: 'Heat olive oil in a pan over medium heat. Add minced garlic and cook for 1 minute until fragrant.' },
+      { id: 's1-4', title: 'Add Tomatoes', description: 'Add crushed tomatoes, season with salt and chilli flakes, and simmer for 10 minutes.' },
+      { id: 's1-5', title: 'Combine & Serve', description: 'Drain pasta and toss with the sauce. Add a splash of pasta water if needed. Serve immediately.' },
+    ],
   },
   {
     id: '2',
@@ -31,6 +38,13 @@ const DEFAULT_RECIPES = [
       { ingredientId: '6', name: 'Onion', quantity: 0.1, unit: 'kg' },
       { ingredientId: '4', name: 'Olive Oil', quantity: 0.03, unit: 'L' },
     ],
+    steps: [
+      { id: 's2-1', title: 'Cook the Rice', description: 'Rinse the rice and cook in 400ml of water with a pinch of salt. Bring to a boil then simmer for 15 minutes.' },
+      { id: 's2-2', title: 'Season the Chicken', description: 'Cut chicken breast into bite-sized pieces and season with salt, pepper, and your favourite spices.' },
+      { id: 's2-3', title: 'Sauté the Onion', description: 'Heat olive oil in a pan. Add sliced onion and cook for 5 minutes until softened and golden.' },
+      { id: 's2-4', title: 'Cook the Chicken', description: 'Add chicken to the pan and cook for 7–8 minutes, stirring occasionally, until cooked through.' },
+      { id: 's2-5', title: 'Assemble & Serve', description: 'Spoon rice into bowls and top with the chicken and onion mixture. Garnish as desired.' },
+    ],
   },
   {
     id: '3',
@@ -43,6 +57,12 @@ const DEFAULT_RECIPES = [
       { ingredientId: '2', name: 'Pasta', quantity: 0.3, unit: 'kg' },
       { ingredientId: '5', name: 'Garlic', quantity: 0.03, unit: 'kg' },
       { ingredientId: '4', name: 'Olive Oil', quantity: 0.08, unit: 'L' },
+    ],
+    steps: [
+      { id: 's3-1', title: 'Boil the Pasta', description: 'Cook pasta in well-salted boiling water until al dente. Reserve 1 cup of pasta water before draining.' },
+      { id: 's3-2', title: 'Infuse the Oil', description: 'Gently heat olive oil in a large pan over low heat. Add thinly sliced garlic and cook until lightly golden, about 3 minutes.' },
+      { id: 's3-3', title: 'Combine', description: 'Add drained pasta to the pan with a splash of pasta water. Toss well to coat every strand in the garlic oil.' },
+      { id: 's3-4', title: 'Serve', description: 'Plate immediately and finish with a drizzle of extra olive oil and fresh parsley if available.' },
     ],
   },
 ]
@@ -77,10 +97,19 @@ export const useRecipesStore = defineStore('recipes', () => {
       prepTime: parseInt(recipe.prepTime) || 0,
       category: recipe.category || 'Other',
       ingredients: recipe.ingredients || [],
+      steps: recipe.steps || [],
     }
     recipes.value.push(newRecipe)
     saveToStorage(recipes.value)
     return newRecipe
+  }
+
+  function updateRecipeSteps(id, steps) {
+    const recipe = recipes.value.find(r => r.id === id)
+    if (recipe) {
+      recipe.steps = steps
+      saveToStorage(recipes.value)
+    }
   }
 
   function deleteRecipe(id) {
@@ -88,5 +117,5 @@ export const useRecipesStore = defineStore('recipes', () => {
     saveToStorage(recipes.value)
   }
 
-  return { recipes, selectedRecipe, selectRecipe, addRecipe, deleteRecipe }
+  return { recipes, selectedRecipe, selectRecipe, addRecipe, updateRecipeSteps, deleteRecipe }
 })
