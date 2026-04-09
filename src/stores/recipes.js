@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { saveCollectionAsJson, subscribeToCollection, isFirebaseConfigured } from '../firebase.js'
+import { saveCollectionAsJson, subscribeToCollection, isApiConfigured } from '../api.js'
 
 const STORAGE_KEY = 'cooking_recipes'
 const FIRESTORE_KEY = 'recipes'
@@ -132,7 +132,7 @@ export const useRecipesStore = defineStore('recipes', () => {
   const recipes = ref(loadFromStorage())
   const selectedRecipe = ref(null)
 
-  if (isFirebaseConfigured()) {
+  if (isApiConfigured()) {
     subscribeToCollection(FIRESTORE_KEY, (data) => {
       recipes.value = data
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))

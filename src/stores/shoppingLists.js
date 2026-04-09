@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { saveCollectionAsJson, loadCollectionAsJson, isFirebaseConfigured } from '../firebase.js'
+import { saveCollectionAsJson, loadCollectionAsJson, isApiConfigured } from '../api.js'
 
 const STORAGE_KEY = 'cooking_shopping_lists'
 const FIRESTORE_KEY = 'shoppingLists'
@@ -22,7 +22,7 @@ function saveToStorage(lists) {
 export const useShoppingListsStore = defineStore('shoppingLists', () => {
   const lists = ref(loadFromStorage())
 
-  if (isFirebaseConfigured()) {
+  if (isApiConfigured()) {
     loadCollectionAsJson(FIRESTORE_KEY).then(data => {
       if (data) {
         lists.value = data
