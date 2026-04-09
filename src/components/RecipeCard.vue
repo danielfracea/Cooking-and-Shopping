@@ -15,15 +15,15 @@
         <div class="nutrition-stat rounded-lg px-2 py-1 bg-orange-lighten-4 d-flex align-center ga-1">
           <v-icon size="13" color="deep-orange-darken-1">mdi-fire</v-icon>
           <div>
-            <div class="text-caption font-weight-bold" style="line-height:1.2">{{ nutrition.calories }}</div>
-            <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1; font-size:9px!important">kcal</div>
+            <div class="text-caption font-weight-bold nutrition-stat__value">{{ nutrition.calories }}</div>
+            <div class="nutrition-stat__label">kcal</div>
           </div>
         </div>
         <div class="nutrition-stat rounded-lg px-2 py-1 bg-red-lighten-4 d-flex align-center ga-1">
           <v-icon size="13" color="red-darken-1">mdi-arm-flex</v-icon>
           <div>
-            <div class="text-caption font-weight-bold" style="line-height:1.2">{{ nutrition.protein }}g</div>
-            <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1; font-size:9px!important">{{ t('recipeCard.protein') }}</div>
+            <div class="text-caption font-weight-bold nutrition-stat__value">{{ nutrition.protein }}g</div>
+            <div class="nutrition-stat__label">{{ t('recipeCard.protein') }}</div>
           </div>
         </div>
       </div>
@@ -54,4 +54,16 @@ const nutrition = computed(() => {
   return { calories: Math.round(calories), protein: Math.round(protein) }
 })
 </script>
+
+<style scoped>
+.nutrition-stat__value {
+  line-height: 1.2;
+}
+.nutrition-stat__label {
+  font-size: 0.65rem;
+  line-height: 1;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+</style>
 

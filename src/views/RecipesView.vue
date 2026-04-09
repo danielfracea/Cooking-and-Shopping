@@ -141,28 +141,28 @@
                   <v-icon size="18" color="deep-orange-darken-1">mdi-fire</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.calories }}</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.kcal') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.kcal') }}</div>
                   </div>
                 </div>
                 <div class="nutrition-stat rounded-lg px-3 py-2 bg-red-lighten-4 d-flex align-center ga-2">
                   <v-icon size="18" color="red-darken-1">mdi-arm-flex</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.protein }}g</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.protein') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.protein') }}</div>
                   </div>
                 </div>
                 <div class="nutrition-stat rounded-lg px-3 py-2 bg-yellow-lighten-3 d-flex align-center ga-2">
                   <v-icon size="18" color="amber-darken-2">mdi-grain</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.carbs }}g</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.carbs') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.carbs') }}</div>
                   </div>
                 </div>
                 <div class="nutrition-stat rounded-lg px-3 py-2 bg-blue-lighten-4 d-flex align-center ga-2">
                   <v-icon size="18" color="blue-darken-1">mdi-water</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.total.fat }}g</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.fat') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.fat') }}</div>
                   </div>
                 </div>
               </div>
@@ -174,28 +174,28 @@
                   <v-icon size="18" color="deep-orange-darken-1">mdi-fire</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.calories }}</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.kcal') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.kcal') }}</div>
                   </div>
                 </div>
                 <div class="nutrition-stat rounded-lg px-3 py-2 bg-red-lighten-4 d-flex align-center ga-2">
                   <v-icon size="18" color="red-darken-1">mdi-arm-flex</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.protein }}g</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.protein') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.protein') }}</div>
                   </div>
                 </div>
                 <div class="nutrition-stat rounded-lg px-3 py-2 bg-yellow-lighten-3 d-flex align-center ga-2">
                   <v-icon size="18" color="amber-darken-2">mdi-grain</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.carbs }}g</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.carbs') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.carbs') }}</div>
                   </div>
                 </div>
                 <div class="nutrition-stat rounded-lg px-3 py-2 bg-blue-lighten-4 d-flex align-center ga-2">
                   <v-icon size="18" color="blue-darken-1">mdi-water</v-icon>
                   <div>
                     <div class="text-body-2 font-weight-bold">{{ recipeNutrition.perServing.fat }}g</div>
-                    <div class="text-caption text-uppercase text-medium-emphasis" style="line-height:1">{{ t('recipes.detail.fat') }}</div>
+                    <div class="nutrition-stat__label">{{ t('recipes.detail.fat') }}</div>
                   </div>
                 </div>
               </div>
@@ -432,3 +432,12 @@ function removeStep(index) {
   selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
 }
 </script>
+
+<style scoped>
+.nutrition-stat__label {
+  font-size: 0.65rem;
+  line-height: 1;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+</style>
