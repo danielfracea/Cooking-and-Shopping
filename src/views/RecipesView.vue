@@ -32,7 +32,17 @@
           <h2 class="text-h5 font-weight-bold">{{ selectedRecipe.name }}</h2>
           <v-chip v-if="selectedRecipe.category" size="small" color="blue-lighten-4" text-color="blue-darken-3">{{ selectedRecipe.category }}</v-chip>
         </div>
-        <v-btn color="error" size="small" prepend-icon="mdi-delete" @click="deleteRecipe(selectedRecipe.id)">Delete</v-btn>
+        <div class="d-flex ga-2">
+          <v-btn
+            color="primary"
+            prepend-icon="mdi-chef-hat"
+            :disabled="(selectedRecipe.steps || []).length === 0"
+            @click="showWizard = true"
+          >
+            Start Cooking
+          </v-btn>
+          <v-btn color="error" size="small" variant="outlined" prepend-icon="mdi-delete" @click="deleteRecipe(selectedRecipe.id)">Delete</v-btn>
+        </div>
       </div>
 
       <v-row class="mb-4">
@@ -60,7 +70,8 @@
         </v-col>
       </v-row>
 
-      <v-card>
+      <!-- Ingredients -->
+      <v-card class="mb-4">
         <v-card-title class="pb-1">Ingredients</v-card-title>
         <v-list density="compact">
           <v-list-item
@@ -95,6 +106,34 @@
           <v-alert v-if="addedMessage" type="success" variant="tonal" density="compact" class="mt-3">{{ addedMessage }}</v-alert>
         </v-card-text>
       </v-card>
+
+      <!-- Steps -->
+      <v-card>
+        <v-card-title class="d-flex align-center justify-space-between pb-1">
+          <span>Preparation Steps</span>
+          <v-btn size="small" variant="text" color="primary" prepend-icon="mdi-plus" @click="openAddStep">Add Step</v-btn>
+        </v-card-title>
+
+        <div v-if="(selectedRecipe.steps || []).length === 0" class="pa-4 text-medium-emphasis text-body-2 text-center">
+          No steps yet. Add the first preparation step.
+        </div>
+
+        <v-list v-else density="compact">
+          <v-list-item
+            v-for="(step, index) in selectedRecipe.steps"
+            :key="step.id"
+            :title="`${index + 1}. ${step.title}`"
+            :subtitle="step.description"
+          >
+            <template #prepend>
+              <v-avatar color="primary" size="28" class="text-caption font-weight-bold">{{ index + 1 }}</v-avatar>
+            </template>
+            <template #append>
+              <v-btn icon="mdi-delete" size="x-small" variant="text" color="error" @click.stop="removeStep(index)" />
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
     </div>
 
     <!-- Add Recipe Dialog -->
@@ -120,6 +159,46 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Add Step Dialog -->
+    <v-dialog v-model="showAddStep" max-width="480">
+      <v-card>
+        <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
+          <span>Add Preparation Step</span>
+          <v-btn icon="mdi-close" variant="text" size="small" @click="showAddStep = false" />
+        </v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="newStep.title"
+            label="Step Title *"
+            variant="outlined"
+            density="compact"
+            placeholder="e.g. Boil the water"
+            class="mb-2"
+          />
+          <v-textarea
+            v-model="newStep.description"
+            label="Instructions *"
+            variant="outlined"
+            density="compact"
+            rows="3"
+            placeholder="Describe what to do in this step..."
+          />
+        </v-card-text>
+        <v-card-actions class="px-4 pb-4">
+          <v-spacer />
+          <v-btn variant="text" @click="showAddStep = false">Cancel</v-btn>
+          <v-btn color="primary" :disabled="!newStep.title.trim() || !newStep.description.trim()" @click="saveStep">Add Step</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Cooking Wizard -->
+    <RecipeWizard
+      v-model="showWizard"
+      :recipe-name="selectedRecipe ? selectedRecipe.name : ''"
+      :steps="selectedRecipe ? (selectedRecipe.steps || []) : []"
+    />
   </div>
 </template>
 
@@ -128,15 +207,86 @@ import { ref, computed } from 'vue'
 import { useRecipesStore } from '../stores/recipes'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import RecipeCard from '../components/RecipeCard.vue'
-const recipesStore = useRecipesStore(); const listsStore = useShoppingListsStore()
-const recipes = computed(() => recipesStore.recipes); const shoppingLists = computed(() => listsStore.lists)
-const selectedRecipe = ref(null); const targetListId = ref(''); const addedMessage = ref(''); const showAddRecipe = ref(false)
+import RecipeWizard from '../components/RecipeWizard.vue'
+
+const recipesStore = useRecipesStore()
+const listsStore = useShoppingListsStore()
+
+const recipes = computed(() => recipesStore.recipes)
+const shoppingLists = computed(() => listsStore.lists)
+
+const selectedRecipe = ref(null)
+const targetListId = ref('')
+const addedMessage = ref('')
+const showAddRecipe = ref(false)
+const showWizard = ref(false)
+const showAddStep = ref(false)
+
 const newRecipe = ref({ name: '', description: '', category: '', prepTime: 30, servings: 4 })
-function viewRecipe(recipe) { selectedRecipe.value = recipe; targetListId.value = ''; addedMessage.value = '' }
-function addToList() { if (!targetListId.value) return; listsStore.addRecipeIngredientsToList(targetListId.value, selectedRecipe.value.ingredients); const list = listsStore.getList(targetListId.value); addedMessage.value = `Added to "${list.name}"!`; setTimeout(() => addedMessage.value = '', 3000) }
-function createAndAdd() { const list = listsStore.createList(`${selectedRecipe.value.name} Ingredients`); listsStore.addRecipeIngredientsToList(list.id, selectedRecipe.value.ingredients); addedMessage.value = `Created "${list.name}"!`; setTimeout(() => addedMessage.value = '', 3000) }
-function deleteRecipe(id) { if (confirm('Delete this recipe?')) { recipesStore.deleteRecipe(id); selectedRecipe.value = null } }
-function openAddRecipe() { newRecipe.value = { name: '', description: '', category: '', prepTime: 30, servings: 4 }; showAddRecipe.value = true }
-function saveRecipe() { if (!newRecipe.value.name.trim()) return; const r = recipesStore.addRecipe({ ...newRecipe.value, ingredients: [] }); showAddRecipe.value = false; viewRecipe(r) }
+const newStep = ref({ title: '', description: '' })
+
+function viewRecipe(recipe) {
+  selectedRecipe.value = recipe
+  targetListId.value = ''
+  addedMessage.value = ''
+}
+
+function addToList() {
+  if (!targetListId.value) return
+  listsStore.addRecipeIngredientsToList(targetListId.value, selectedRecipe.value.ingredients)
+  const list = listsStore.getList(targetListId.value)
+  addedMessage.value = `Added to "${list.name}"!`
+  setTimeout(() => addedMessage.value = '', 3000)
+}
+
+function createAndAdd() {
+  const list = listsStore.createList(`${selectedRecipe.value.name} Ingredients`)
+  listsStore.addRecipeIngredientsToList(list.id, selectedRecipe.value.ingredients)
+  addedMessage.value = `Created "${list.name}"!`
+  setTimeout(() => addedMessage.value = '', 3000)
+}
+
+function deleteRecipe(id) {
+  if (confirm('Delete this recipe?')) {
+    recipesStore.deleteRecipe(id)
+    selectedRecipe.value = null
+  }
+}
+
+function openAddRecipe() {
+  newRecipe.value = { name: '', description: '', category: '', prepTime: 30, servings: 4 }
+  showAddRecipe.value = true
+}
+
+function saveRecipe() {
+  if (!newRecipe.value.name.trim()) return
+  const r = recipesStore.addRecipe({ ...newRecipe.value, ingredients: [] })
+  showAddRecipe.value = false
+  viewRecipe(r)
+}
+
+function openAddStep() {
+  newStep.value = { title: '', description: '' }
+  showAddStep.value = true
+}
+
+function saveStep() {
+  if (!newStep.value.title.trim() || !newStep.value.description.trim()) return
+  const steps = [...(selectedRecipe.value.steps || []), {
+    id: Date.now().toString(),
+    title: newStep.value.title.trim(),
+    description: newStep.value.description.trim(),
+  }]
+  recipesStore.updateRecipeSteps(selectedRecipe.value.id, steps)
+  selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
+  showAddStep.value = false
+}
+
+function removeStep(index) {
+  const steps = [...(selectedRecipe.value.steps || [])]
+  steps.splice(index, 1)
+  recipesStore.updateRecipeSteps(selectedRecipe.value.id, steps)
+  selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
+}
 </script>
 
