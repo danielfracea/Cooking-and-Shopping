@@ -9,6 +9,8 @@ import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'firebase/firestor
 const __dirname = dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: join(__dirname, '..', '.env') })
 
+// Firebase config is read from the shared .env file, which uses VITE_ prefix so the
+// same file is usable by both the Vite frontend (at build time) and this server (at runtime).
 const firebaseConfig = {
   apiKey: process.env.VITE_FIREBASE_API_KEY,
   authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
