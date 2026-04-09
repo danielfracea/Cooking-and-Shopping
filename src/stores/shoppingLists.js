@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { saveCollectionAsJson, loadCollectionAsJson, isFirebaseConfigured } from '../firebase.js'
 
 const STORAGE_KEY = 'cooking_shopping_lists'
+const FIRESTORE_KEY = 'shoppingLists'
 
 function loadFromStorage() {
   try {
@@ -14,10 +16,20 @@ function loadFromStorage() {
 
 function saveToStorage(lists) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(lists))
+  saveCollectionAsJson(FIRESTORE_KEY, lists).catch(console.error)
 }
 
 export const useShoppingListsStore = defineStore('shoppingLists', () => {
   const lists = ref(loadFromStorage())
+
+  if (isFirebaseConfigured()) {
+    loadCollectionAsJson(FIRESTORE_KEY).then(data => {
+      if (data) {
+        lists.value = data
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      }
+    }).catch(console.error)
+  }
 
   function createList(name) {
     const newList = {
