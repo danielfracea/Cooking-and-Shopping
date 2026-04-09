@@ -52,3 +52,16 @@ export async function loadCollectionAsJson(collectionName) {
   }
   return null
 }
+
+export function subscribeToCollection(collectionName, callback) {
+  if (!db) return () => {}
+  const docRef = doc(db, APP_DATA_COLLECTION, collectionName)
+  return onSnapshot(docRef, (snap) => {
+    if (snap.exists()) {
+      try {
+        const parsed = JSON.parse(snap.data().data)
+        callback(parsed)
+      } catch { /* ignore parse errors */ }
+    }
+  })
+}
