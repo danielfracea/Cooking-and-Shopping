@@ -22,15 +22,17 @@
     </v-card-text>
 
     <v-snackbar v-model="shareCopied" color="success" :timeout="3000">
-      Share link copied to clipboard!
+      {{ t('shoppingListCard.shareCopied') }}
     </v-snackbar>
   </v-card>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 
+const { t } = useI18n()
 const props = defineProps({ list: Object })
 defineEmits(['open', 'delete'])
 

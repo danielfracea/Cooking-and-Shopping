@@ -1,20 +1,20 @@
 <template>
   <div>
-    <v-empty-state v-if="!list" icon="mdi-alert-circle-outline" title="List not found">
+    <v-empty-state v-if="!list" icon="mdi-alert-circle-outline" :title="t('shoppingListDetail.notFound.title')">
       <template #actions>
-        <v-btn :to="'/shopping-lists'" variant="outlined">Back to Lists</v-btn>
+        <v-btn :to="'/shopping-lists'" variant="outlined">{{ t('shoppingListDetail.notFound.back') }}</v-btn>
       </template>
     </v-empty-state>
 
     <div v-else>
       <div class="d-flex align-center justify-space-between mb-4 flex-wrap ga-3">
         <div class="d-flex align-center ga-3">
-          <v-btn :to="'/shopping-lists'" variant="outlined" size="small" prepend-icon="mdi-arrow-left">Back</v-btn>
+          <v-btn :to="'/shopping-lists'" variant="outlined" size="small" prepend-icon="mdi-arrow-left">{{ t('shoppingListDetail.back') }}</v-btn>
           <h1 class="text-h5 font-weight-bold">{{ list.name }}</h1>
         </div>
         <div class="d-flex ga-2">
-          <v-btn variant="outlined" prepend-icon="mdi-share-variant" @click="shareList">Share</v-btn>
-          <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddItem = true">Add Item</v-btn>
+          <v-btn variant="outlined" prepend-icon="mdi-share-variant" @click="shareList">{{ t('shoppingListDetail.share') }}</v-btn>
+          <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddItem = true">{{ t('shoppingListDetail.addItem') }}</v-btn>
         </div>
       </div>
 
@@ -41,7 +41,7 @@
               :items="ingredientsStore.ingredients"
               item-title="name"
               return-object
-              label="Quick add item…"
+              :label="t('shoppingListDetail.quickAdd')"
               variant="outlined"
               density="compact"
               hide-details
@@ -65,8 +65,8 @@
       <v-empty-state
         v-if="list.items.length === 0"
         icon="mdi-clipboard-list-outline"
-        title="No items yet"
-        text="Add your first item to this list."
+        :title="t('shoppingListDetail.empty.title')"
+        :text="t('shoppingListDetail.empty.text')"
       />
 
       <v-card v-else>
@@ -98,7 +98,7 @@
     <AddItemModal v-if="showAddItem" @close="showAddItem = false" @add-item="addItem" @add-recipe-ingredients="addRecipeIngredients" />
 
     <v-snackbar v-model="shareCopied" color="success" :timeout="3000">
-      Share link copied to clipboard!
+      {{ t('shoppingListDetail.shareCopied') }}
     </v-snackbar>
   </div>
 </template>
@@ -106,9 +106,11 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
 import AddItemModal from '../components/AddItemModal.vue'
+const { t } = useI18n()
 const route = useRoute()
 const store = useShoppingListsStore()
 const ingredientsStore = useIngredientsStore()

@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="d-flex align-center justify-space-between mb-4 flex-wrap ga-3">
-      <h1 class="text-h5 font-weight-bold">🥦 Ingredients</h1>
-      <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddModal">Add Ingredient</v-btn>
+      <h1 class="text-h5 font-weight-bold">{{ t('ingredients.title') }}</h1>
+      <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddModal">{{ t('ingredients.add') }}</v-btn>
     </div>
 
     <v-row dense class="mb-4">
       <v-col cols="12" sm="6" md="4">
         <v-text-field
           v-model="search"
-          label="Search ingredients..."
+          :label="t('ingredients.search')"
           variant="outlined"
           density="compact"
           prepend-inner-icon="mdi-magnify"
@@ -20,8 +20,8 @@
       <v-col cols="12" sm="6" md="3">
         <v-select
           v-model="selectedCategory"
-          :items="['All Categories', ...categories]"
-          label="Category"
+          :items="[t('ingredients.allCategories'), ...categories]"
+          :label="t('ingredients.category')"
           variant="outlined"
           density="compact"
           hide-details
@@ -32,7 +32,7 @@
     <v-empty-state
       v-if="filteredIngredients.length === 0"
       icon="mdi-food-off"
-      title="No ingredients found"
+      :title="t('ingredients.empty.title')"
     />
 
     <!-- Desktop table -->
@@ -40,8 +40,14 @@
       <v-table>
         <thead>
           <tr>
-            <th>Name</th><th>Category</th><th>Price</th>
-            <th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>Actions</th>
+            <th>{{ t('ingredients.table.name') }}</th>
+            <th>{{ t('ingredients.table.category') }}</th>
+            <th>{{ t('ingredients.table.price') }}</th>
+            <th>{{ t('ingredients.table.calories') }}</th>
+            <th>{{ t('ingredients.table.protein') }}</th>
+            <th>{{ t('ingredients.table.carbs') }}</th>
+            <th>{{ t('ingredients.table.fat') }}</th>
+            <th>{{ t('ingredients.table.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -81,8 +87,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn prepend-icon="mdi-pencil" size="small" variant="text" @click="openEditModal(ing)">Edit</v-btn>
-            <v-btn prepend-icon="mdi-delete" size="small" variant="text" color="error" @click="deleteIngredient(ing.id)">Delete</v-btn>
+            <v-btn prepend-icon="mdi-pencil" size="small" variant="text" @click="openEditModal(ing)">{{ t('ingredients.actions.edit') }}</v-btn>
+            <v-btn prepend-icon="mdi-delete" size="small" variant="text" color="error" @click="deleteIngredient(ing.id)">{{ t('ingredients.actions.delete') }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -92,25 +98,25 @@
     <v-dialog v-model="showModal" max-width="520">
       <v-card>
         <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
-          <span>{{ editingId ? 'Edit' : 'Add' }} Ingredient</span>
+          <span>{{ editingId ? t('ingredients.dialog.editTitle') : t('ingredients.dialog.addTitle') }}</span>
           <v-btn icon="mdi-close" variant="text" size="small" @click="showModal = false" />
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="form.name" label="Name *" variant="outlined" density="compact" class="mb-2" />
+          <v-text-field v-model="form.name" :label="t('ingredients.dialog.name')" variant="outlined" density="compact" class="mb-2" />
           <v-row dense>
-            <v-col cols="6"><v-text-field v-model="form.category" label="Category" variant="outlined" density="compact" /></v-col>
-            <v-col cols="6"><v-text-field v-model="form.unit" label="Unit" variant="outlined" density="compact" /></v-col>
-            <v-col cols="6"><v-text-field v-model="form.price" label="Price (RON)" type="number" variant="outlined" density="compact" min="0" step="0.01" /></v-col>
-            <v-col cols="6"><v-text-field v-model="form.calories" label="Calories" type="number" variant="outlined" density="compact" min="0" /></v-col>
-            <v-col cols="4"><v-text-field v-model="form.protein" label="Protein (g)" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
-            <v-col cols="4"><v-text-field v-model="form.carbs" label="Carbs (g)" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
-            <v-col cols="4"><v-text-field v-model="form.fat" label="Fat (g)" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
+            <v-col cols="6"><v-text-field v-model="form.category" :label="t('ingredients.dialog.category')" variant="outlined" density="compact" /></v-col>
+            <v-col cols="6"><v-text-field v-model="form.unit" :label="t('ingredients.dialog.unit')" variant="outlined" density="compact" /></v-col>
+            <v-col cols="6"><v-text-field v-model="form.price" :label="t('ingredients.dialog.price')" type="number" variant="outlined" density="compact" min="0" step="0.01" /></v-col>
+            <v-col cols="6"><v-text-field v-model="form.calories" :label="t('ingredients.dialog.calories')" type="number" variant="outlined" density="compact" min="0" /></v-col>
+            <v-col cols="4"><v-text-field v-model="form.protein" :label="t('ingredients.dialog.protein')" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
+            <v-col cols="4"><v-text-field v-model="form.carbs" :label="t('ingredients.dialog.carbs')" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
+            <v-col cols="4"><v-text-field v-model="form.fat" :label="t('ingredients.dialog.fat')" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
           </v-row>
         </v-card-text>
         <v-card-actions class="px-4 pb-4">
           <v-spacer />
-          <v-btn variant="text" @click="showModal = false">Cancel</v-btn>
-          <v-btn color="primary" :disabled="!form.name.trim()" @click="saveIngredient">{{ editingId ? 'Update' : 'Add' }} Ingredient</v-btn>
+          <v-btn variant="text" @click="showModal = false">{{ t('ingredients.dialog.cancel') }}</v-btn>
+          <v-btn color="primary" :disabled="!form.name.trim()" @click="saveIngredient">{{ editingId ? t('ingredients.dialog.update') : t('ingredients.dialog.add') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -119,18 +125,21 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useIngredientsStore } from '../stores/ingredients'
+const { t } = useI18n()
 const store = useIngredientsStore()
-const search = ref(''); const selectedCategory = ref('All Categories'); const showModal = ref(false); const editingId = ref(null)
+const search = ref(''); const selectedCategory = ref(null); const showModal = ref(false); const editingId = ref(null)
 const form = ref({ name: '', category: '', unit: '', price: 0, calories: 0, protein: 0, carbs: 0, fat: 0 })
 const categories = computed(() => [...new Set(store.ingredients.map(i => i.category))].sort())
+const allCategoriesLabel = computed(() => t('ingredients.allCategories'))
 const filteredIngredients = computed(() => store.ingredients.filter(i =>
   i.name.toLowerCase().includes(search.value.toLowerCase()) &&
-  (selectedCategory.value === 'All Categories' || i.category === selectedCategory.value)
+  (!selectedCategory.value || selectedCategory.value === allCategoriesLabel.value || i.category === selectedCategory.value)
 ))
 function openAddModal() { editingId.value = null; form.value = { name: '', category: '', unit: 'kg', price: 0, calories: 0, protein: 0, carbs: 0, fat: 0 }; showModal.value = true }
 function openEditModal(ing) { editingId.value = ing.id; form.value = { ...ing }; showModal.value = true }
 function saveIngredient() { if (!form.value.name.trim()) return; editingId.value ? store.updateIngredient(editingId.value, { ...form.value }) : store.addIngredient({ ...form.value }); showModal.value = false }
-function deleteIngredient(id) { if (confirm('Delete this ingredient?')) store.deleteIngredient(id) }
+function deleteIngredient(id) { if (confirm(t('ingredients.confirm.delete'))) store.deleteIngredient(id) }
 </script>
 

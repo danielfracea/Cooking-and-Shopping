@@ -2,14 +2,14 @@
   <v-dialog model-value max-width="500" @update:model-value="$emit('close')">
     <v-card>
       <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
-        <span>Add Item</span>
+        <span>{{ t('addItemModal.title') }}</span>
         <v-btn icon="mdi-close" variant="text" size="small" @click="$emit('close')" />
       </v-card-title>
 
       <v-tabs v-model="activeTab" color="primary" grow>
-        <v-tab value="manual">Manual</v-tab>
-        <v-tab value="ingredient">From Ingredients</v-tab>
-        <v-tab value="recipe">From Recipe</v-tab>
+        <v-tab value="manual">{{ t('addItemModal.tabs.manual') }}</v-tab>
+        <v-tab value="ingredient">{{ t('addItemModal.tabs.ingredient') }}</v-tab>
+        <v-tab value="recipe">{{ t('addItemModal.tabs.recipe') }}</v-tab>
       </v-tabs>
 
       <v-card-text class="pt-4">
@@ -21,7 +21,7 @@
               :items="ingredientsStore.ingredients"
               item-title="name"
               return-object
-              label="Item Name *"
+              :label="t('addItemModal.manual.itemName')"
               variant="outlined"
               density="compact"
               class="mb-3"
@@ -30,18 +30,18 @@
             />
             <v-row dense>
               <v-col cols="6">
-                <v-text-field v-model="manualItem.quantity" label="Quantity" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
+                <v-text-field v-model="manualItem.quantity" :label="t('addItemModal.manual.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model="manualItem.unit" label="Unit" variant="outlined" density="compact" placeholder="kg, L, pcs..." />
+                <v-text-field v-model="manualItem.unit" :label="t('addItemModal.manual.unit')" variant="outlined" density="compact" :placeholder="t('addItemModal.manual.unitPlaceholder')" />
               </v-col>
             </v-row>
-            <v-btn color="primary" block @click="addManual" :disabled="!manualItemName.trim()">Add Item</v-btn>
+            <v-btn color="primary" block @click="addManual" :disabled="!manualItemName.trim()">{{ t('addItemModal.manual.add') }}</v-btn>
           </v-tabs-window-item>
 
           <!-- From Ingredients Tab -->
           <v-tabs-window-item value="ingredient">
-            <v-text-field v-model="ingredientSearch" label="Search ingredients..." variant="outlined" density="compact" prepend-inner-icon="mdi-magnify" class="mb-2" />
+            <v-text-field v-model="ingredientSearch" :label="t('addItemModal.ingredient.search')" variant="outlined" density="compact" prepend-inner-icon="mdi-magnify" class="mb-2" />
             <v-list density="compact" max-height="200" class="border rounded mb-2" style="overflow-y:auto">
               <v-list-item
                 v-for="ing in filteredIngredients"
@@ -55,14 +55,14 @@
             </v-list>
             <v-row v-if="selectedIngredient" dense class="mt-2">
               <v-col cols="6">
-                <v-text-field v-model="ingQuantity" label="Quantity" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
+                <v-text-field v-model="ingQuantity" :label="t('addItemModal.ingredient.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model="ingUnit" label="Unit" variant="outlined" density="compact" />
+                <v-text-field v-model="ingUnit" :label="t('addItemModal.ingredient.unit')" variant="outlined" density="compact" />
               </v-col>
             </v-row>
             <v-btn color="primary" block @click="addFromIngredient" :disabled="!selectedIngredient">
-              Add {{ selectedIngredient?.name || 'Selected' }}
+              {{ selectedIngredient ? t('addItemModal.ingredient.add', { name: selectedIngredient.name }) : t('addItemModal.ingredient.addSelected') }}
             </v-btn>
           </v-tabs-window-item>
 
@@ -80,12 +80,12 @@
               />
             </v-list>
             <v-card v-if="selectedRecipe" variant="tonal" color="primary" class="mb-3 pa-3">
-              <p class="text-caption font-weight-bold mb-1">Ingredients:</p>
+              <p class="text-caption font-weight-bold mb-1">{{ t('addItemModal.recipe.ingredientsLabel') }}</p>
               <p v-for="ing in selectedRecipe.ingredients" :key="ing.ingredientId" class="text-caption">
                 {{ ing.quantity }} {{ ing.unit }} {{ ing.name }}
               </p>
             </v-card>
-            <v-btn color="primary" block @click="addFromRecipe" :disabled="!selectedRecipe">Add All Ingredients</v-btn>
+            <v-btn color="primary" block @click="addFromRecipe" :disabled="!selectedRecipe">{{ t('addItemModal.recipe.addAll') }}</v-btn>
           </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
@@ -95,9 +95,11 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useIngredientsStore } from '../stores/ingredients'
 import { useRecipesStore } from '../stores/recipes'
 
+const { t } = useI18n()
 const emit = defineEmits(['close', 'add-item', 'add-recipe-ingredients'])
 
 const ingredientsStore = useIngredientsStore()
