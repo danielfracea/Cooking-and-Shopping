@@ -12,7 +12,10 @@
           <v-btn :to="'/shopping-lists'" variant="outlined" size="small" prepend-icon="mdi-arrow-left">Back</v-btn>
           <h1 class="text-h5 font-weight-bold">{{ list.name }}</h1>
         </div>
-        <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddItem = true">Add Item</v-btn>
+        <div class="d-flex ga-2">
+          <v-btn variant="outlined" prepend-icon="mdi-share-variant" @click="shareList">Share</v-btn>
+          <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddItem = true">Add Item</v-btn>
+        </div>
       </div>
 
       <v-card class="mb-4">
@@ -68,6 +71,10 @@
     </div>
 
     <AddItemModal v-if="showAddItem" @close="showAddItem = false" @add-item="addItem" @add-recipe-ingredients="addRecipeIngredients" />
+
+    <v-snackbar v-model="shareCopied" color="success" :timeout="3000">
+      Share link copied to clipboard!
+    </v-snackbar>
   </div>
 </template>
 
@@ -79,6 +86,7 @@ import AddItemModal from '../components/AddItemModal.vue'
 const route = useRoute()
 const store = useShoppingListsStore()
 const showAddItem = ref(false)
+const shareCopied = ref(false)
 const list = computed(() => store.getList(route.params.id))
 const checkedCount = computed(() => list.value?.items.filter(i => i.checked).length ?? 0)
 const progressPercent = computed(() => list.value?.items.length > 0 ? (checkedCount.value / list.value.items.length) * 100 : 0)
@@ -86,5 +94,15 @@ function toggleItem(itemId) { store.toggleItem(route.params.id, itemId) }
 function removeItem(itemId) { store.removeItemFromList(route.params.id, itemId) }
 function addItem(item) { store.addItemToList(route.params.id, item) }
 function addRecipeIngredients(ingredients) { store.addRecipeIngredientsToList(route.params.id, ingredients) }
+async function shareList() {
+  const url = store.generateShareUrl(route.params.id)
+  if (!url) return
+  try {
+    await navigator.clipboard.writeText(url)
+    shareCopied.value = true
+  } catch {
+    prompt('Copy this link to share:', url)
+  }
+}
 </script>
 
