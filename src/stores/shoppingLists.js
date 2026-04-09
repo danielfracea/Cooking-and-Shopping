@@ -78,5 +78,25 @@ export const useShoppingListsStore = defineStore('shoppingLists', () => {
     ingredients.forEach(ing => addItemToList(listId, ing))
   }
 
-  return { lists, createList, deleteList, getList, addItemToList, removeItemFromList, toggleItem, addRecipeIngredientsToList }
+  function generateShareUrl(id) {
+    const list = getList(id)
+    if (!list) return null
+    const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(list))))
+    const base = window.location.origin + window.location.pathname.replace(/\/$/, '')
+    return `${base}/shared?data=${encoded}`
+  }
+
+  function importList(sharedList) {
+    const newList = {
+      id: crypto.randomUUID(),
+      name: sharedList.name,
+      items: sharedList.items.map(item => ({ ...item, id: crypto.randomUUID(), checked: false })),
+      createdAt: new Date().toISOString(),
+    }
+    lists.value.push(newList)
+    saveToStorage(lists.value)
+    return newList
+  }
+
+  return { lists, createList, deleteList, getList, addItemToList, removeItemFromList, toggleItem, addRecipeIngredientsToList, generateShareUrl, importList }
 })
