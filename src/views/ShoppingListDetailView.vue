@@ -131,7 +131,18 @@ const quickAddName = computed(() => {
   return quickAddSelection.value.name
 })
 function onQuickAddSelectionChange(val) {
-  quickAddUnit.value = (val && typeof val === 'object') ? (val.unit || '') : ''
+  if (val && typeof val === 'object') {
+    quickAddUnit.value = val.unit || ''
+  } else {
+    const matched = typeof val === 'string'
+      ? ingredientsStore.ingredients.find(i => i.name.toLowerCase() === val.toLowerCase())
+      : null
+    quickAddUnit.value = matched?.unit ?? ''
+  }
+}
+function resetQuickAdd() {
+  quickAddSelection.value = null
+  quickAddUnit.value = ''
 }
 function submitQuickAdd() {
   const name = quickAddName.value.trim()
@@ -144,8 +155,7 @@ function submitQuickAdd() {
   }
   if (matched) item.ingredientId = matched.id
   store.addItemToList(route.params.id, item)
-  quickAddSelection.value = null
-  quickAddUnit.value = ''
+  resetQuickAdd()
 }
 async function shareList() {
   const url = store.generateShareUrl(route.params.id)
