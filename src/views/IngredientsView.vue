@@ -20,7 +20,9 @@
       <v-col cols="12" sm="6" md="3">
         <v-select
           v-model="selectedCategory"
-          :items="[t('ingredients.allCategories'), ...categories]"
+          :items="categoryItems"
+          item-title="title"
+          item-value="value"
           :label="t('ingredients.category')"
           variant="outlined"
           density="compact"
@@ -129,13 +131,19 @@ import { useI18n } from 'vue-i18n'
 import { useIngredientsStore } from '../stores/ingredients'
 const { t } = useI18n()
 const store = useIngredientsStore()
-const search = ref(''); const selectedCategory = ref(null); const showModal = ref(false); const editingId = ref(null)
+const search = ref('')
+const selectedCategory = ref(null)
+const showModal = ref(false)
+const editingId = ref(null)
 const form = ref({ name: '', category: '', unit: '', price: 0, calories: 0, protein: 0, carbs: 0, fat: 0 })
 const categories = computed(() => [...new Set(store.ingredients.map(i => i.category))].sort())
-const allCategoriesLabel = computed(() => t('ingredients.allCategories'))
+const categoryItems = computed(() => [
+  { title: t('ingredients.allCategories'), value: null },
+  ...categories.value.map(c => ({ title: c, value: c })),
+])
 const filteredIngredients = computed(() => store.ingredients.filter(i =>
   i.name.toLowerCase().includes(search.value.toLowerCase()) &&
-  (!selectedCategory.value || selectedCategory.value === allCategoriesLabel.value || i.category === selectedCategory.value)
+  (selectedCategory.value === null || i.category === selectedCategory.value)
 ))
 function openAddModal() { editingId.value = null; form.value = { name: '', category: '', unit: 'kg', price: 0, calories: 0, protein: 0, carbs: 0, fat: 0 }; showModal.value = true }
 function openEditModal(ing) { editingId.value = ing.id; form.value = { ...ing }; showModal.value = true }
