@@ -16,7 +16,18 @@
         <v-tabs-window v-model="activeTab">
           <!-- Manual Tab -->
           <v-tabs-window-item value="manual">
-            <v-text-field v-model="manualItem.name" label="Item Name *" variant="outlined" density="compact" class="mb-3" />
+            <v-combobox
+              v-model="manualSelection"
+              :items="ingredientsStore.ingredients"
+              item-title="name"
+              return-object
+              label="Item Name *"
+              variant="outlined"
+              density="compact"
+              class="mb-3"
+              clearable
+              @update:model-value="onManualSelectionChange"
+            />
             <v-row dense>
               <v-col cols="6">
                 <v-text-field v-model="manualItem.quantity" label="Quantity" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
@@ -25,7 +36,7 @@
                 <v-text-field v-model="manualItem.unit" label="Unit" variant="outlined" density="compact" placeholder="kg, L, pcs..." />
               </v-col>
             </v-row>
-            <v-btn color="primary" block @click="addManual" :disabled="!manualItem.name.trim()">Add Item</v-btn>
+            <v-btn color="primary" block @click="addManual" :disabled="!manualItemName.trim()">Add Item</v-btn>
           </v-tabs-window-item>
 
           <!-- From Ingredients Tab -->
@@ -93,12 +104,28 @@ const ingredientsStore = useIngredientsStore()
 const recipesStore = useRecipesStore()
 
 const activeTab = ref('manual')
-const manualItem = ref({ name: '', quantity: 1, unit: '' })
+const manualItem = ref({ quantity: 1, unit: '' })
+// manualSelection can be a string (free text) or an ingredient object (picked from list)
+const manualSelection = ref(null)
 const ingredientSearch = ref('')
 const selectedIngredient = ref(null)
 const ingQuantity = ref(1)
 const ingUnit = ref('')
 const selectedRecipe = ref(null)
+
+// Derive a plain name string from whatever the user typed or selected
+const manualItemName = computed(() => {
+  if (!manualSelection.value) return ''
+  if (typeof manualSelection.value === 'string') return manualSelection.value
+  return manualSelection.value.name
+})
+
+function onManualSelectionChange(val) {
+  // When an existing ingredient is selected, pre-fill its unit
+  if (val && typeof val === 'object') {
+    manualItem.value.unit = val.unit || ''
+  }
+}
 
 const filteredIngredients = computed(() =>
   ingredientsStore.ingredients.filter(i =>
@@ -115,9 +142,23 @@ function selectIngredient(ing) {
 }
 
 function addManual() {
-  if (!manualItem.value.name.trim()) return
-  emit('add-item', { ...manualItem.value })
-  manualItem.value = { name: '', quantity: 1, unit: '' }
+  const name = manualItemName.value.trim()
+  if (!name) return
+  // Check if the typed/selected name matches an existing ingredient
+  const matchedIngredient = ingredientsStore.ingredients.find(
+    i => i.name.toLowerCase() === name.toLowerCase()
+  )
+  const item = {
+    name: matchedIngredient ? matchedIngredient.name : name,
+    quantity: manualItem.value.quantity,
+    unit: manualItem.value.unit,
+  }
+  if (matchedIngredient) {
+    item.ingredientId = matchedIngredient.id
+  }
+  emit('add-item', item)
+  manualSelection.value = null
+  manualItem.value = { quantity: 1, unit: '' }
   emit('close')
 }
 
