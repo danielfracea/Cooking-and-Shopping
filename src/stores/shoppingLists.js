@@ -55,14 +55,23 @@ export const useShoppingListsStore = defineStore('shoppingLists', () => {
   function addItemToList(listId, item) {
     const list = getList(listId)
     if (list) {
-      list.items.push({
-        id: Date.now().toString() + Math.random(),
-        name: item.name,
-        quantity: item.quantity || 1,
-        unit: item.unit || '',
-        checked: false,
-        ingredientId: item.ingredientId || null,
-      })
+      const existing = list.items.find(i =>
+        ((item.ingredientId && i.ingredientId && i.ingredientId === item.ingredientId) ||
+        (!item.ingredientId && !i.ingredientId && i.name.toLowerCase() === item.name.toLowerCase())) &&
+        (i.unit || '') === (item.unit || '')
+      )
+      if (existing) {
+        existing.quantity = (parseFloat(existing.quantity) || 0) + (parseFloat(item.quantity) || 1)
+      } else {
+        list.items.push({
+          id: Date.now().toString() + Math.random(),
+          name: item.name,
+          quantity: item.quantity || 1,
+          unit: item.unit || '',
+          checked: false,
+          ingredientId: item.ingredientId || null,
+        })
+      }
       saveToStorage(lists.value)
     }
   }
