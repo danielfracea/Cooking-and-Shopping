@@ -38,7 +38,7 @@
                 :color="i === currentIndex ? 'primary' : i < currentIndex ? 'success' : 'grey-lighten-2'"
                 size="10"
               >
-                {{ i < currentIndex ? 'mdi-circle' : i === currentIndex ? 'mdi-circle' : 'mdi-circle-outline' }}
+                {{ i <= currentIndex ? 'mdi-circle' : 'mdi-circle-outline' }}
               </v-icon>
             </div>
           </div>
