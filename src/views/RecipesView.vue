@@ -207,6 +207,33 @@
         </v-card-text>
       </v-card>
 
+      <!-- Tools -->
+      <v-card class="mb-4">
+        <v-card-title class="d-flex align-center justify-space-between pb-1">
+          <span>{{ t('recipes.detail.tools') }}</span>
+          <v-btn size="small" variant="text" color="primary" prepend-icon="mdi-plus" @click="openAddTool">{{ t('recipes.detail.addTool') }}</v-btn>
+        </v-card-title>
+
+        <div v-if="(selectedRecipe.tools || []).length === 0" class="pa-4 text-medium-emphasis text-body-2 text-center">
+          {{ t('recipes.detail.noTools') }}
+        </div>
+
+        <v-list v-else density="compact">
+          <v-list-item
+            v-for="(tool, index) in selectedRecipe.tools"
+            :key="index"
+            :title="tool"
+          >
+            <template #prepend>
+              <v-icon color="primary" size="20">mdi-tools</v-icon>
+            </template>
+            <template #append>
+              <v-btn icon="mdi-delete" size="x-small" variant="text" color="error" @click.stop="removeTool(index)" />
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+
       <!-- Steps -->
       <v-card>
         <v-card-title class="d-flex align-center justify-space-between pb-1">
@@ -260,6 +287,19 @@
                 class="mb-2"
               />
             </v-col>
+            <v-col cols="12">
+              <v-combobox
+                v-model="newRecipe.tools"
+                :label="t('recipes.addDialog.tools')"
+                variant="outlined"
+                density="compact"
+                multiple
+                chips
+                closable-chips
+                :placeholder="t('recipes.addDialog.toolsPlaceholder')"
+                class="mb-2"
+              />
+            </v-col>
             <v-col cols="6" sm="6"><v-text-field v-model="newRecipe.prepTime" :label="t('recipes.addDialog.prepTime')" type="number" variant="outlined" density="compact" min="0" /></v-col>
             <v-col cols="6" sm="6"><v-text-field v-model="newRecipe.servings" :label="t('recipes.addDialog.servings')" type="number" variant="outlined" density="compact" min="1" /></v-col>
           </v-row>
@@ -301,6 +341,30 @@
           <v-spacer />
           <v-btn variant="text" @click="showAddStep = false">{{ t('recipes.stepDialog.cancel') }}</v-btn>
           <v-btn color="primary" :disabled="!newStep.title.trim() || !newStep.description.trim()" @click="saveStep">{{ t('recipes.stepDialog.add') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Add Tool Dialog -->
+    <v-dialog v-model="showAddTool" max-width="480">
+      <v-card>
+        <v-card-title class="d-flex align-center justify-space-between pa-4 pb-2">
+          <span>{{ t('recipes.detail.toolDialog.title') }}</span>
+          <v-btn icon="mdi-close" variant="text" size="small" @click="showAddTool = false" />
+        </v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="newTool"
+            :label="t('recipes.detail.toolDialog.toolName')"
+            variant="outlined"
+            density="compact"
+            :placeholder="t('recipes.detail.toolDialog.placeholder')"
+          />
+        </v-card-text>
+        <v-card-actions class="px-4 pb-4">
+          <v-spacer />
+          <v-btn variant="text" @click="showAddTool = false">{{ t('recipes.detail.toolDialog.cancel') }}</v-btn>
+          <v-btn color="primary" :disabled="!newTool.trim()" @click="saveTool">{{ t('recipes.detail.toolDialog.add') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -376,9 +440,11 @@ const addedMessage = ref('')
 const showAddRecipe = ref(false)
 const showWizard = ref(false)
 const showAddStep = ref(false)
+const showAddTool = ref(false)
 
-const newRecipe = ref({ name: '', description: '', tags: [], prepTime: 30, servings: 4 })
+const newRecipe = ref({ name: '', description: '', tags: [], tools: [], prepTime: 30, servings: 4 })
 const newStep = ref({ title: '', description: '' })
+const newTool = ref('')
 
 function viewRecipe(recipe) {
   selectedRecipe.value = recipe
@@ -409,7 +475,7 @@ function deleteRecipe(id) {
 }
 
 function openAddRecipe() {
-  newRecipe.value = { name: '', description: '', tags: [], prepTime: 30, servings: 4 }
+  newRecipe.value = { name: '', description: '', tags: [], tools: [], prepTime: 30, servings: 4 }
   showAddRecipe.value = true
 }
 
@@ -441,6 +507,26 @@ function removeStep(index) {
   const steps = [...(selectedRecipe.value.steps || [])]
   steps.splice(index, 1)
   recipesStore.updateRecipeSteps(selectedRecipe.value.id, steps)
+  selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
+}
+
+function openAddTool() {
+  newTool.value = ''
+  showAddTool.value = true
+}
+
+function saveTool() {
+  if (!newTool.value.trim()) return
+  const tools = [...(selectedRecipe.value.tools || []), newTool.value.trim()]
+  recipesStore.updateRecipeTools(selectedRecipe.value.id, tools)
+  selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
+  showAddTool.value = false
+}
+
+function removeTool(index) {
+  const tools = [...(selectedRecipe.value.tools || [])]
+  tools.splice(index, 1)
+  recipesStore.updateRecipeTools(selectedRecipe.value.id, tools)
   selectedRecipe.value = recipesStore.recipes.find(r => r.id === selectedRecipe.value.id)
 }
 </script>
