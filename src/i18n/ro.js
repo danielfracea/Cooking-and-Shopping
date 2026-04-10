@@ -230,7 +230,7 @@ export default {
       month: 'Lună',
     },
     slots: {
-      breakfast: 'Mic dejun',
+      breakfast: 'Mic-dejun',
       lunch: 'Prânz',
       dinner: 'Cină',
     },
