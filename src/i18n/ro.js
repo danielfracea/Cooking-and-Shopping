@@ -5,6 +5,7 @@ export default {
     ingredients: 'Ingrediente',
     recipes: 'Rețete',
     signOut: 'Deconectare',
+    guest: 'Vizitator',
   },
   shoppingLists: {
     title: '🛒 Liste de cumpărături',
@@ -210,6 +211,7 @@ export default {
   auth: {
     signInPrompt: 'Conectați-vă pentru a accesa listele și rețetele dvs.',
     signInWithGoogle: 'Conectare cu Google',
+    continueAsGuest: 'Continuați ca vizitator',
     error: 'Conectarea a eșuat. Vă rugăm să încercați din nou.',
   },
 }
