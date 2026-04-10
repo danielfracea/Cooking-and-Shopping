@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { onScopeDispose } from 'vue'
 import { saveCollectionAsJson, subscribeToCollection } from '../api.js'
 
 const STORAGE_KEY = 'cooking_ingredients'
@@ -33,7 +34,7 @@ function saveToStorage(ingredients) {
 export const useIngredientsStore = defineStore('ingredients', () => {
   const ingredients = ref(loadFromStorage())
 
-  subscribeToCollection(FIRESTORE_KEY, (data) => {
+  const unsubscribeIngredients = subscribeToCollection(FIRESTORE_KEY, (data) => {
     if (data === null) {
       ingredients.value = DEFAULT_INGREDIENTS
       localStorage.removeItem(STORAGE_KEY)
@@ -42,6 +43,7 @@ export const useIngredientsStore = defineStore('ingredients', () => {
     ingredients.value = data
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
   })
+  onScopeDispose(unsubscribeIngredients)
 
   function addIngredient(ingredient) {
     const newIng = {

@@ -46,6 +46,8 @@ export function subscribeToCollection(collectionName, callback) {
             if (parsed !== null) callback(parsed)
           } catch { /* ignore parse errors */ }
         }
+      }, (err) => {
+        console.error(`Firestore snapshot error for ${collectionName}:`, err)
       })
     } else {
       callback(null)

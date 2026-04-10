@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { onScopeDispose } from 'vue'
 import { saveCollectionAsJson, subscribeToCollection } from '../api.js'
 
 const STORAGE_KEY = 'cooking_shopping_lists'
@@ -22,7 +23,7 @@ function saveToStorage(lists) {
 export const useShoppingListsStore = defineStore('shoppingLists', () => {
   const lists = ref(loadFromStorage())
 
-  subscribeToCollection(FIRESTORE_KEY, (data) => {
+  const unsubscribeLists = subscribeToCollection(FIRESTORE_KEY, (data) => {
     if (data === null) {
       lists.value = []
       localStorage.removeItem(STORAGE_KEY)
@@ -31,6 +32,7 @@ export const useShoppingListsStore = defineStore('shoppingLists', () => {
     lists.value = data
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
   })
+  onScopeDispose(unsubscribeLists)
 
   function createList(name) {
     const newList = {
