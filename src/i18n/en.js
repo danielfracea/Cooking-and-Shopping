@@ -5,6 +5,7 @@ export default {
     ingredients: 'Ingredients',
     recipes: 'Recipes',
     signOut: 'Sign Out',
+    guest: 'Guest',
   },
   shoppingLists: {
     title: '🛒 Shopping Lists',
@@ -210,6 +211,7 @@ export default {
   auth: {
     signInPrompt: 'Sign in to access your lists and recipes',
     signInWithGoogle: 'Sign in with Google',
+    continueAsGuest: 'Continue as Guest',
     error: 'Sign-in failed. Please try again.',
   },
 }

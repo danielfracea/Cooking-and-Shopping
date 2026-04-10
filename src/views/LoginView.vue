@@ -15,6 +15,16 @@
       >
         {{ t('auth.signInWithGoogle') }}
       </v-btn>
+      <v-divider class="my-4" />
+      <v-btn
+        block
+        size="large"
+        variant="text"
+        prepend-icon="mdi-account-outline"
+        @click="authStore.continueAsGuest()"
+      >
+        {{ t('auth.continueAsGuest') }}
+      </v-btn>
       <div v-if="error" class="text-error text-caption mt-3 text-center">{{ t('auth.error') }}</div>
     </v-card>
   </div>
