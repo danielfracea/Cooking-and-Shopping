@@ -16,6 +16,21 @@
         <v-btn value="en" size="small">EN</v-btn>
         <v-btn value="ro" size="small">RO</v-btn>
       </v-btn-toggle>
+      <v-menu v-if="authStore.user">
+        <template #activator="{ props }">
+          <v-btn icon v-bind="props" class="mr-1">
+            <v-avatar size="32" color="primary">
+              <v-img v-if="authStore.user.photoURL" :src="authStore.user.photoURL" :alt="authStore.user.displayName" />
+              <span v-else class="text-caption font-weight-bold text-white">{{ userInitial }}</span>
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list density="compact" min-width="180">
+          <v-list-item :subtitle="authStore.user.email" :title="authStore.user.displayName || authStore.user.email" />
+          <v-divider />
+          <v-list-item prepend-icon="mdi-logout" :title="t('nav.signOut')" @click="authStore.signOutUser()" />
+        </v-list>
+      </v-menu>
     </template>
   </v-app-bar>
 
@@ -26,17 +41,26 @@
       <v-list-item :to="'/shopping-lists'" prepend-icon="mdi-cart" :title="t('nav.shoppingLists')" @click="drawer = false" />
       <v-list-item :to="'/ingredients'" prepend-icon="mdi-food-apple" :title="t('nav.ingredients')" @click="drawer = false" />
       <v-list-item :to="'/recipes'" prepend-icon="mdi-book-open-variant" :title="t('nav.recipes')" @click="drawer = false" />
+      <v-divider class="my-1" />
+      <v-list-item prepend-icon="mdi-logout" :title="t('nav.signOut')" @click="authStore.signOutUser()" />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '../stores/auth'
 
 const { t, locale } = useI18n()
+const authStore = useAuthStore()
 const drawer = ref(false)
 const currentLocale = ref(locale.value)
+
+const userInitial = computed(() => {
+  const name = authStore.user?.displayName || authStore.user?.email || '?'
+  return name.charAt(0).toUpperCase()
+})
 
 function setLocale(val) {
   locale.value = val
