@@ -26,7 +26,10 @@
           </v-btn>
         </template>
         <v-list density="compact" min-width="180">
-          <v-list-item :subtitle="authStore.user.email" :title="authStore.user.displayName || authStore.user.email" />
+          <v-list-item
+            :title="authStore.user.displayName || authStore.user.email"
+            :subtitle="authStore.user.isGuest ? t('nav.guest') : authStore.user.email"
+          />
           <v-divider />
           <v-list-item prepend-icon="mdi-logout" :title="t('nav.signOut')" @click="authStore.signOutUser()" />
         </v-list>
