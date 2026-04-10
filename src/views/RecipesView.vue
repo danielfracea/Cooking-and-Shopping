@@ -100,7 +100,7 @@
             v-for="ing in selectedRecipe.ingredients"
             :key="ing.ingredientId"
             :title="ing.name"
-            :subtitle="`${settingsStore.displayQuantity(ing.quantity, ing.unit).quantity} ${settingsStore.displayQuantity(ing.quantity, ing.unit).unit}`"
+            :subtitle="formatIngredientQuantity(ing)"
           >
             <template #prepend>
               <v-icon color="primary" size="8">mdi-circle</v-icon>
@@ -393,6 +393,11 @@ const recipesStore = useRecipesStore()
 const listsStore = useShoppingListsStore()
 const ingredientsStore = useIngredientsStore()
 const settingsStore = useSettingsStore()
+
+function formatIngredientQuantity(ing) {
+  const { quantity, unit } = settingsStore.displayQuantity(ing.quantity, ing.unit)
+  return unit ? `${quantity} ${unit}` : quantity
+}
 
 const recipes = computed(() => recipesStore.recipes)
 const shoppingLists = computed(() => listsStore.lists)

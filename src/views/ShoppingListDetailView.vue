@@ -85,8 +85,7 @@
             </template>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
             <v-list-item-subtitle v-if="item.quantity || item.unit">
-              {{ settingsStore.displayQuantity(item.quantity, item.unit).quantity }}
-              {{ settingsStore.displayQuantity(item.quantity, item.unit).unit }}
+              {{ formatItemQuantity(item) }}
             </v-list-item-subtitle>
             <template #append>
               <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click="removeItem(item.id)" />
@@ -122,6 +121,10 @@ const shareCopied = ref(false)
 const list = computed(() => store.getList(route.params.id))
 const checkedCount = computed(() => list.value?.items.filter(i => i.checked).length ?? 0)
 const progressPercent = computed(() => list.value?.items.length > 0 ? (checkedCount.value / list.value.items.length) * 100 : 0)
+function formatItemQuantity(item) {
+  const { quantity, unit } = settingsStore.displayQuantity(item.quantity, item.unit)
+  return unit ? `${quantity} ${unit}` : quantity
+}
 function toggleItem(itemId) { store.toggleItem(route.params.id, itemId) }
 function removeItem(itemId) { store.removeItemFromList(route.params.id, itemId) }
 function addItem(item) { store.addItemToList(route.params.id, item) }

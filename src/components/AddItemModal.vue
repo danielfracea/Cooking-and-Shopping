@@ -82,7 +82,7 @@
             <v-card v-if="selectedRecipe" variant="tonal" color="primary" class="mb-3 pa-3">
               <p class="text-caption font-weight-bold mb-1">{{ t('addItemModal.recipe.ingredientsLabel') }}</p>
               <p v-for="ing in selectedRecipe.ingredients" :key="ing.ingredientId" class="text-caption">
-                {{ settingsStore.displayQuantity(ing.quantity, ing.unit).quantity }} {{ settingsStore.displayQuantity(ing.quantity, ing.unit).unit }} {{ ing.name }}
+                {{ formatIngredientQuantity(ing) }} {{ ing.name }}
               </p>
             </v-card>
             <v-btn color="primary" block @click="addFromRecipe" :disabled="!selectedRecipe">{{ t('addItemModal.recipe.addAll') }}</v-btn>
@@ -108,6 +108,11 @@ const ingredientsStore = useIngredientsStore()
 const recipesStore = useRecipesStore()
 const settingsStore = useSettingsStore()
 const unitSelectItems = UNIT_SELECT_ITEMS
+
+function formatIngredientQuantity(ing) {
+  const { quantity, unit } = settingsStore.displayQuantity(ing.quantity, ing.unit)
+  return unit ? `${quantity} ${unit}` : quantity
+}
 
 const activeTab = ref('manual')
 const manualItem = ref({ quantity: 1, unit: '' })
