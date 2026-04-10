@@ -4,6 +4,7 @@ export default {
     shoppingLists: 'Shopping Lists',
     ingredients: 'Ingredients',
     recipes: 'Recipes',
+    signOut: 'Sign Out',
   },
   shoppingLists: {
     title: '🛒 Shopping Lists',
@@ -205,5 +206,10 @@ export default {
   },
   shoppingListCard: {
     shareCopied: 'Share link copied to clipboard!',
+  },
+  auth: {
+    signInPrompt: 'Sign in to access your lists and recipes',
+    signInWithGoogle: 'Sign in with Google',
+    error: 'Sign-in failed. Please try again.',
   },
 }

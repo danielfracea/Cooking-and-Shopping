@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { saveCollectionAsJson, loadCollectionAsJson, isApiConfigured } from '../api.js'
+import { saveCollectionAsJson, subscribeToCollection } from '../api.js'
 
 const STORAGE_KEY = 'cooking_shopping_lists'
 const FIRESTORE_KEY = 'shoppingLists'
@@ -22,14 +22,15 @@ function saveToStorage(lists) {
 export const useShoppingListsStore = defineStore('shoppingLists', () => {
   const lists = ref(loadFromStorage())
 
-  if (isApiConfigured()) {
-    loadCollectionAsJson(FIRESTORE_KEY).then(data => {
-      if (data) {
-        lists.value = data
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-      }
-    }).catch(console.error)
-  }
+  subscribeToCollection(FIRESTORE_KEY, (data) => {
+    if (data === null) {
+      lists.value = []
+      localStorage.removeItem(STORAGE_KEY)
+      return
+    }
+    lists.value = data
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  })
 
   function createList(name) {
     const newList = {

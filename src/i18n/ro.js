@@ -4,6 +4,7 @@ export default {
     shoppingLists: 'Liste de cumpărături',
     ingredients: 'Ingrediente',
     recipes: 'Rețete',
+    signOut: 'Deconectare',
   },
   shoppingLists: {
     title: '🛒 Liste de cumpărături',
@@ -205,5 +206,10 @@ export default {
   },
   shoppingListCard: {
     shareCopied: 'Linkul de distribuire a fost copiat!',
+  },
+  auth: {
+    signInPrompt: 'Conectați-vă pentru a accesa listele și rețetele dvs.',
+    signInWithGoogle: 'Conectare cu Google',
+    error: 'Conectarea a eșuat. Vă rugăm să încercați din nou.',
   },
 }
