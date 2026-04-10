@@ -11,6 +11,7 @@
         <v-btn :to="'/shopping-lists'" variant="text" prepend-icon="mdi-cart" rounded="lg">{{ t('nav.shoppingLists') }}</v-btn>
         <v-btn :to="'/ingredients'" variant="text" prepend-icon="mdi-food-apple" rounded="lg">{{ t('nav.ingredients') }}</v-btn>
         <v-btn :to="'/recipes'" variant="text" prepend-icon="mdi-book-open-variant" rounded="lg">{{ t('nav.recipes') }}</v-btn>
+        <v-btn :to="'/meal-planner'" variant="text" prepend-icon="mdi-calendar-month" rounded="lg">{{ t('nav.mealPlanner') }}</v-btn>
       </div>
       <v-btn-toggle v-model="currentLocale" mandatory density="compact" rounded="lg" class="mr-2" @update:model-value="setLocale">
         <v-btn value="en" size="small">EN</v-btn>
@@ -44,6 +45,7 @@
       <v-list-item :to="'/shopping-lists'" prepend-icon="mdi-cart" :title="t('nav.shoppingLists')" @click="drawer = false" />
       <v-list-item :to="'/ingredients'" prepend-icon="mdi-food-apple" :title="t('nav.ingredients')" @click="drawer = false" />
       <v-list-item :to="'/recipes'" prepend-icon="mdi-book-open-variant" :title="t('nav.recipes')" @click="drawer = false" />
+      <v-list-item :to="'/meal-planner'" prepend-icon="mdi-calendar-month" :title="t('nav.mealPlanner')" @click="drawer = false" />
       <v-divider class="my-1" />
       <v-list-item prepend-icon="mdi-logout" :title="t('nav.signOut')" @click="authStore.signOutUser()" />
     </v-list>
