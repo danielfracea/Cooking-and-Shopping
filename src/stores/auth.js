@@ -10,11 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(true)
 
   onAuthStateChanged(auth, (u) => {
-    if (u) {
-      user.value = u
-    } else if (!user.value?.isGuest) {
-      user.value = null
-    }
+    user.value = u || (user.value?.isGuest ? user.value : null)
     loading.value = false
   })
 
@@ -24,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function continueAsGuest() {
-    const randomId = 'guest-' + Math.random().toString(36).slice(2, 11)
+    const randomId = 'guest-' + crypto.randomUUID()
     user.value = {
       uid: randomId,
       displayName: 'Guest',
