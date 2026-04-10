@@ -85,7 +85,8 @@
             </template>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
             <v-list-item-subtitle v-if="item.quantity || item.unit">
-              {{ item.quantity }} {{ item.unit }}
+              {{ settingsStore.displayQuantity(item.quantity, item.unit).quantity }}
+              {{ settingsStore.displayQuantity(item.quantity, item.unit).unit }}
             </v-list-item-subtitle>
             <template #append>
               <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click="removeItem(item.id)" />
@@ -109,11 +110,13 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
+import { useSettingsStore } from '../stores/settings'
 import AddItemModal from '../components/AddItemModal.vue'
 const { t } = useI18n()
 const route = useRoute()
 const store = useShoppingListsStore()
 const ingredientsStore = useIngredientsStore()
+const settingsStore = useSettingsStore()
 const showAddItem = ref(false)
 const shareCopied = ref(false)
 const list = computed(() => store.getList(route.params.id))

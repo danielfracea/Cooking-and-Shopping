@@ -107,7 +107,7 @@
           <v-text-field v-model="form.name" :label="t('ingredients.dialog.name')" variant="outlined" density="compact" class="mb-2" />
           <v-row dense>
             <v-col cols="6"><v-text-field v-model="form.category" :label="t('ingredients.dialog.category')" variant="outlined" density="compact" /></v-col>
-            <v-col cols="6"><v-text-field v-model="form.unit" :label="t('ingredients.dialog.unit')" variant="outlined" density="compact" /></v-col>
+            <v-col cols="6"><v-combobox v-model="form.unit" :label="t('ingredients.dialog.unit')" :items="unitSelectItems" item-title="title" item-value="value" variant="outlined" density="compact" /></v-col>
             <v-col cols="6"><v-text-field v-model="form.price" :label="t('ingredients.dialog.price')" type="number" variant="outlined" density="compact" min="0" step="0.01" /></v-col>
             <v-col cols="6"><v-text-field v-model="form.calories" :label="t('ingredients.dialog.calories')" type="number" variant="outlined" density="compact" min="0" /></v-col>
             <v-col cols="4"><v-text-field v-model="form.protein" :label="t('ingredients.dialog.protein')" type="number" variant="outlined" density="compact" min="0" step="0.1" /></v-col>
@@ -129,8 +129,10 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useIngredientsStore } from '../stores/ingredients'
+import { UNIT_SELECT_ITEMS } from '../utils/units.js'
 const { t } = useI18n()
 const store = useIngredientsStore()
+const unitSelectItems = UNIT_SELECT_ITEMS
 const search = ref('')
 const selectedCategory = ref(null)
 const showModal = ref(false)

@@ -221,6 +221,11 @@ export default {
   shoppingListCard: {
     shareCopied: 'Share link copied to clipboard!',
   },
+  settings: {
+    unitSystem: 'Unit System',
+    metric: 'Metric',
+    imperial: 'Imperial',
+  },
   auth: {
     signInPrompt: 'Sign in to access your lists and recipes',
     signInWithGoogle: 'Sign in with Google',

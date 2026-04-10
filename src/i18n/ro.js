@@ -221,6 +221,11 @@ export default {
   shoppingListCard: {
     shareCopied: 'Linkul de distribuire a fost copiat!',
   },
+  settings: {
+    unitSystem: 'Sistem de unități',
+    metric: 'Metric',
+    imperial: 'Imperial',
+  },
   auth: {
     signInPrompt: 'Conectați-vă pentru a accesa listele și rețetele dvs.',
     signInWithGoogle: 'Conectare cu Google',

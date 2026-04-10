@@ -13,6 +13,10 @@
         <v-btn :to="'/recipes'" variant="text" prepend-icon="mdi-book-open-variant" rounded="lg">{{ t('nav.recipes') }}</v-btn>
         <v-btn :to="'/meal-planner'" variant="text" prepend-icon="mdi-calendar-month" rounded="lg">{{ t('nav.mealPlanner') }}</v-btn>
       </div>
+      <v-btn-toggle v-model="settingsStore.unitSystem" mandatory density="compact" rounded="lg" class="mr-2" @update:model-value="settingsStore.setUnitSystem">
+        <v-btn value="metric" size="small" :title="t('settings.metric')">M</v-btn>
+        <v-btn value="imperial" size="small" :title="t('settings.imperial')">I</v-btn>
+      </v-btn-toggle>
       <v-btn-toggle v-model="currentLocale" mandatory density="compact" rounded="lg" class="mr-2" @update:model-value="setLocale">
         <v-btn value="en" size="small">EN</v-btn>
         <v-btn value="ro" size="small">RO</v-btn>
@@ -56,9 +60,11 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { useSettingsStore } from '../stores/settings'
 
 const { t, locale } = useI18n()
 const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
 const drawer = ref(false)
 const currentLocale = ref(locale.value)
 
