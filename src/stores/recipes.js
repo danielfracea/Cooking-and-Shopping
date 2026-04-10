@@ -27,6 +27,7 @@ const DEFAULT_RECIPES = [
     servings: 4,
     prepTime: 30,
     tags: ['Italian', 'Pasta', 'Main Course'],
+    tools: ['Large cooking pot', 'Frying pan', 'Colander', 'Wooden spoon', 'Chef\'s knife'],
     ingredients: [
       { ingredientId: '2', name: 'Pasta', quantity: 0.5, unit: 'kg' },
       { ingredientId: '3', name: 'Tomato', quantity: 0.4, unit: 'kg' },
@@ -48,6 +49,7 @@ const DEFAULT_RECIPES = [
     servings: 2,
     prepTime: 40,
     tags: ['Main Course', 'Healthy'],
+    tools: ['Rice cooker', 'Frying pan', 'Cutting board', 'Chef\'s knife', 'Mixing bowl'],
     ingredients: [
       { ingredientId: '1', name: 'Chicken Breast', quantity: 0.4, unit: 'kg' },
       { ingredientId: '7', name: 'Rice', quantity: 0.2, unit: 'kg' },
@@ -69,6 +71,7 @@ const DEFAULT_RECIPES = [
     servings: 2,
     prepTime: 20,
     tags: ['Italian', 'Pasta'],
+    tools: ['Large cooking pot', 'Large frying pan', 'Colander', 'Wooden spoon'],
     ingredients: [
       { ingredientId: '2', name: 'Pasta', quantity: 0.3, unit: 'kg' },
       { ingredientId: '5', name: 'Garlic', quantity: 0.03, unit: 'kg' },
@@ -88,6 +91,7 @@ const DEFAULT_RECIPES = [
     servings: 2,
     prepTime: 15,
     tags: ['Salad', 'Healthy'],
+    tools: ['Large salad bowl', 'Chef\'s knife', 'Cutting board'],
     ingredients: [
       { ingredientId: '3', name: 'Tomato', quantity: 0.3, unit: 'kg' },
       { ingredientId: '4', name: 'Olive Oil', quantity: 0.03, unit: 'L' },
@@ -105,6 +109,7 @@ const DEFAULT_RECIPES = [
     servings: 4,
     prepTime: 20,
     tags: ['Dessert'],
+    tools: ['Double boiler (bain-marie)', 'Hand mixer', 'Mixing bowls', 'Serving glasses', 'Spatula'],
     ingredients: [],
     steps: [
       { id: 's5-1', title: 'Melt the Chocolate', description: 'Break dark chocolate into pieces and melt over a bain-marie. Let it cool slightly.' },
@@ -156,6 +161,7 @@ export const useRecipesStore = defineStore('recipes', () => {
       servings: parseInt(recipe.servings) || 1,
       prepTime: parseInt(recipe.prepTime) || 0,
       tags: Array.isArray(recipe.tags) ? recipe.tags : [],
+      tools: Array.isArray(recipe.tools) ? recipe.tools : [],
       ingredients: recipe.ingredients || [],
       steps: recipe.steps || [],
     }
@@ -172,10 +178,18 @@ export const useRecipesStore = defineStore('recipes', () => {
     }
   }
 
+  function updateRecipeTools(id, tools) {
+    const recipe = recipes.value.find(r => r.id === id)
+    if (recipe) {
+      recipe.tools = tools
+      saveToStorage(recipes.value)
+    }
+  }
+
   function deleteRecipe(id) {
     recipes.value = recipes.value.filter(r => r.id !== id)
     saveToStorage(recipes.value)
   }
 
-  return { recipes, selectedRecipe, selectRecipe, addRecipe, updateRecipeSteps, deleteRecipe }
+  return { recipes, selectedRecipe, selectRecipe, addRecipe, updateRecipeSteps, updateRecipeTools, deleteRecipe }
 })
