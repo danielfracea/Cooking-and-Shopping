@@ -106,8 +106,7 @@ export const useShoppingListsStore = defineStore('shoppingLists', () => {
     const list = getList(id)
     if (!list) return null
     const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(list))))
-    const base = window.location.origin + window.location.pathname.replace(/\/$/, '')
-    return `${base}/shared?data=${encoded}`
+    return `${window.location.origin}/shared?data=${encodeURIComponent(encoded)}`
   }
 
   function importList(sharedList) {
