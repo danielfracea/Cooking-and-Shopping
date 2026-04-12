@@ -119,6 +119,7 @@ import { useIngredientsStore } from '../stores/ingredients'
 import { useRecipesStore } from '../stores/recipes'
 import { useSettingsStore } from '../stores/settings'
 import { UNIT_SELECT_ITEMS } from '../utils/units.js'
+import { LOCALE_TO_SPEECH_LANG } from '../utils/speech.js'
 
 const { t, locale } = useI18n()
 const emit = defineEmits(['close', 'add-item', 'add-recipe-ingredients'])
@@ -213,7 +214,6 @@ function addFromRecipe() {
 }
 
 // ── Speech-to-text ────────────────────────────────────────────────────────────
-const LOCALE_TO_SPEECH_LANG = { en: 'en-US', ro: 'ro-RO' }
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 const isListening = ref(false)
 const speechUnsupported = ref(false)
