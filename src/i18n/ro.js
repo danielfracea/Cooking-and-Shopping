@@ -5,6 +5,7 @@ export default {
     ingredients: 'Ingrediente',
     recipes: 'Rețete',
     mealPlanner: 'Planificator',
+    settings: 'Setări',
     signOut: 'Deconectare',
     guest: 'Vizitator',
   },
@@ -230,7 +231,9 @@ export default {
     shareCopied: 'Linkul de distribuire a fost copiat!',
   },
   settings: {
+    title: 'Setări',
     unitSystem: 'Sistem de unități',
+    unitSystemDescription: 'Alegeți între unități metrice (kg, L, cm) și imperiale (lb, oz, in) pentru afișarea măsurătorilor.',
     metric: 'Metric',
     imperial: 'Imperial',
   },

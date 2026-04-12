@@ -5,6 +5,7 @@ import IngredientsView from '../views/IngredientsView.vue'
 import RecipesView from '../views/RecipesView.vue'
 import SharedListView from '../views/SharedListView.vue'
 import MealPlannerView from '../views/MealPlannerView.vue'
+import SettingsView from '../views/SettingsView.vue'
 
 const routes = [
   { path: '/', redirect: '/shopping-lists' },
@@ -14,6 +15,7 @@ const routes = [
   { path: '/recipes', component: RecipesView },
   { path: '/meal-planner', component: MealPlannerView },
   { path: '/shared', component: SharedListView },
+  { path: '/settings', component: SettingsView },
 ]
 
 export default createRouter({
