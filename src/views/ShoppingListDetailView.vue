@@ -130,7 +130,7 @@ import { useShoppingListsStore } from '../stores/shoppingLists'
 import { useIngredientsStore } from '../stores/ingredients'
 import { useSettingsStore } from '../stores/settings'
 import AddItemModal from '../components/AddItemModal.vue'
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const store = useShoppingListsStore()
 const ingredientsStore = useIngredientsStore()
@@ -196,6 +196,7 @@ async function shareList() {
 }
 
 // ── Speech-to-text ────────────────────────────────────────────────────────────
+const LOCALE_TO_SPEECH_LANG = { en: 'en-US', ro: 'ro-RO' }
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 const isListening = ref(false)
 const speechUnsupported = ref(false)
@@ -204,7 +205,6 @@ let recognition = null
 
 if (SpeechRecognition) {
   recognition = new SpeechRecognition()
-  recognition.lang = navigator.language || 'en-US'
   recognition.interimResults = false
   recognition.maxAlternatives = 1
 
@@ -232,6 +232,7 @@ function toggleSpeech() {
     isListening.value = false
     return
   }
+  recognition.lang = LOCALE_TO_SPEECH_LANG[locale.value] || navigator.language || 'en-US'
   recognition.start()
   isListening.value = true
 }
