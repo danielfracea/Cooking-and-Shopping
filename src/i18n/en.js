@@ -5,6 +5,7 @@ export default {
     ingredients: 'Ingredients',
     recipes: 'Recipes',
     mealPlanner: 'Meal Planner',
+    settings: 'Settings',
     signOut: 'Sign Out',
     guest: 'Guest',
   },
@@ -230,7 +231,9 @@ export default {
     shareCopied: 'Share link copied to clipboard!',
   },
   settings: {
+    title: 'Settings',
     unitSystem: 'Unit System',
+    unitSystemDescription: 'Choose between metric (kg, L, cm) and imperial (lb, oz, in) units for displaying measurements.',
     metric: 'Metric',
     imperial: 'Imperial',
   },
