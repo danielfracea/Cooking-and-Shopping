@@ -33,7 +33,7 @@
                 <v-text-field v-model="manualItem.quantity" :label="t('addItemModal.manual.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model="manualItem.unit" :label="t('addItemModal.manual.unit')" variant="outlined" density="compact" :placeholder="t('addItemModal.manual.unitPlaceholder')" />
+                <v-combobox v-model="manualItem.unit" :label="t('addItemModal.manual.unit')" :items="unitSelectItems" item-title="title" item-value="value" variant="outlined" density="compact" :placeholder="t('addItemModal.manual.unitPlaceholder')" />
               </v-col>
             </v-row>
             <v-btn color="primary" block @click="addManual" :disabled="!manualItemName.trim()">{{ t('addItemModal.manual.add') }}</v-btn>
@@ -58,7 +58,7 @@
                 <v-text-field v-model="ingQuantity" :label="t('addItemModal.ingredient.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model="ingUnit" :label="t('addItemModal.ingredient.unit')" variant="outlined" density="compact" />
+                <v-combobox v-model="ingUnit" :label="t('addItemModal.ingredient.unit')" :items="unitSelectItems" item-title="title" item-value="value" variant="outlined" density="compact" />
               </v-col>
             </v-row>
             <v-btn color="primary" block @click="addFromIngredient" :disabled="!selectedIngredient">
@@ -82,7 +82,7 @@
             <v-card v-if="selectedRecipe" variant="tonal" color="primary" class="mb-3 pa-3">
               <p class="text-caption font-weight-bold mb-1">{{ t('addItemModal.recipe.ingredientsLabel') }}</p>
               <p v-for="ing in selectedRecipe.ingredients" :key="ing.ingredientId" class="text-caption">
-                {{ ing.quantity }} {{ ing.unit }} {{ ing.name }}
+                {{ formatIngredientQuantity(ing) }} {{ ing.name }}
               </p>
             </v-card>
             <v-btn color="primary" block @click="addFromRecipe" :disabled="!selectedRecipe">{{ t('addItemModal.recipe.addAll') }}</v-btn>
@@ -98,12 +98,21 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useIngredientsStore } from '../stores/ingredients'
 import { useRecipesStore } from '../stores/recipes'
+import { useSettingsStore } from '../stores/settings'
+import { UNIT_SELECT_ITEMS } from '../utils/units.js'
 
 const { t } = useI18n()
 const emit = defineEmits(['close', 'add-item', 'add-recipe-ingredients'])
 
 const ingredientsStore = useIngredientsStore()
 const recipesStore = useRecipesStore()
+const settingsStore = useSettingsStore()
+const unitSelectItems = UNIT_SELECT_ITEMS
+
+function formatIngredientQuantity(ing) {
+  const { quantity, unit } = settingsStore.displayQuantity(ing.quantity, ing.unit)
+  return unit ? `${quantity} ${unit}` : quantity
+}
 
 const activeTab = ref('manual')
 const manualItem = ref({ quantity: 1, unit: '' })

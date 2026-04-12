@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { onScopeDispose } from 'vue'
 import { saveCollectionAsJson, subscribeToCollection } from '../api.js'
+import { canConvert, convertUnit } from '../utils/units.js'
 
 const STORAGE_KEY = 'cooking_shopping_lists'
 const FIRESTORE_KEY = 'shoppingLists'
@@ -58,13 +59,30 @@ export const useShoppingListsStore = defineStore('shoppingLists', () => {
   function addItemToList(listId, item) {
     const list = getList(listId)
     if (list) {
+      // Find an existing entry for the same ingredient/name, regardless of unit
       const existing = list.items.find(i =>
-        ((item.ingredientId && i.ingredientId && i.ingredientId === item.ingredientId) ||
-        (!item.ingredientId && !i.ingredientId && i.name.toLowerCase() === item.name.toLowerCase())) &&
-        (i.unit || '') === (item.unit || '')
+        (item.ingredientId && i.ingredientId && i.ingredientId === item.ingredientId) ||
+        (!item.ingredientId && !i.ingredientId && i.name.toLowerCase() === item.name.toLowerCase())
       )
       if (existing) {
-        existing.quantity = (parseFloat(existing.quantity) || 0) + (parseFloat(item.quantity) || 1)
+        // If units are compatible, convert the incoming quantity to the existing unit
+        if (canConvert(item.unit, existing.unit)) {
+          existing.quantity = (parseFloat(existing.quantity) || 0) +
+            convertUnit(parseFloat(item.quantity) || 1, item.unit, existing.unit)
+        } else if ((existing.unit || '') === (item.unit || '')) {
+          // Same unit (or both empty) — just add
+          existing.quantity = (parseFloat(existing.quantity) || 0) + (parseFloat(item.quantity) || 1)
+        } else {
+          // Incompatible units — add as a separate entry
+          list.items.push({
+            id: Date.now().toString() + Math.random(),
+            name: item.name,
+            quantity: item.quantity || 1,
+            unit: item.unit || '',
+            checked: false,
+            ingredientId: item.ingredientId || null,
+          })
+        }
       } else {
         list.items.push({
           id: Date.now().toString() + Math.random(),
