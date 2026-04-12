@@ -53,6 +53,16 @@
           </v-col>
           <v-col cols="auto">
             <v-btn
+              :icon="isListening ? 'mdi-microphone-off' : 'mdi-microphone'"
+              :color="isListening ? 'error' : 'default'"
+              variant="tonal"
+              size="small"
+              :title="t('shoppingListDetail.speechToText')"
+              @click="toggleSpeech"
+            />
+          </v-col>
+          <v-col cols="auto">
+            <v-btn
               color="primary"
               icon="mdi-plus"
               :disabled="!quickAddName.trim()"
@@ -60,6 +70,15 @@
             />
           </v-col>
         </v-row>
+        <v-alert v-if="speechUnsupported" type="warning" density="compact" class="mt-2" variant="tonal">
+          {{ t('shoppingListDetail.speechNotSupported') }}
+        </v-alert>
+        <v-alert v-if="speechError" type="error" density="compact" class="mt-2" variant="tonal">
+          {{ t('shoppingListDetail.speechError') }}
+        </v-alert>
+        <v-alert v-if="isListening" type="info" density="compact" class="mt-2" variant="tonal" icon="mdi-microphone">
+          {{ t('shoppingListDetail.speechListening') }}
+        </v-alert>
       </v-card>
 
       <v-empty-state
@@ -104,7 +123,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useShoppingListsStore } from '../stores/shoppingLists'
@@ -175,5 +194,48 @@ async function shareList() {
     prompt('Copy this link to share:', url)
   }
 }
+
+// ── Speech-to-text ────────────────────────────────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+const isListening = ref(false)
+const speechUnsupported = ref(false)
+const speechError = ref(false)
+let recognition = null
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition()
+  recognition.lang = navigator.language || 'en-US'
+  recognition.interimResults = false
+  recognition.maxAlternatives = 1
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript
+    quickAddSelection.value = transcript
+    onQuickAddSelectionChange(transcript)
+    isListening.value = false
+  }
+  recognition.onerror = () => {
+    speechError.value = true
+    isListening.value = false
+  }
+  recognition.onend = () => { isListening.value = false }
+}
+
+function toggleSpeech() {
+  if (!SpeechRecognition) {
+    speechUnsupported.value = true
+    return
+  }
+  speechError.value = false
+  if (isListening.value) {
+    recognition.stop()
+    isListening.value = false
+    return
+  }
+  recognition.start()
+  isListening.value = true
+}
+
+onUnmounted(() => { recognition?.stop() })
 </script>
 

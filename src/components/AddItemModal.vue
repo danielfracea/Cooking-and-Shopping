@@ -16,18 +16,37 @@
         <v-tabs-window v-model="activeTab">
           <!-- Manual Tab -->
           <v-tabs-window-item value="manual">
-            <v-combobox
-              v-model="manualSelection"
-              :items="ingredientsStore.ingredients"
-              item-title="name"
-              return-object
-              :label="t('addItemModal.manual.itemName')"
-              variant="outlined"
-              density="compact"
-              class="mb-3"
-              clearable
-              @update:model-value="onManualSelectionChange"
-            />
+            <div class="d-flex align-center ga-2 mb-3">
+              <v-combobox
+                v-model="manualSelection"
+                :items="ingredientsStore.ingredients"
+                item-title="name"
+                return-object
+                :label="t('addItemModal.manual.itemName')"
+                variant="outlined"
+                density="compact"
+                clearable
+                style="flex: 1"
+                @update:model-value="onManualSelectionChange"
+              />
+              <v-btn
+                :icon="isListening ? 'mdi-microphone-off' : 'mdi-microphone'"
+                :color="isListening ? 'error' : 'primary'"
+                variant="tonal"
+                size="small"
+                :title="t('addItemModal.manual.speechToText')"
+                @click="toggleSpeech"
+              />
+            </div>
+            <v-alert v-if="speechUnsupported" type="warning" density="compact" class="mb-3" variant="tonal">
+              {{ t('addItemModal.manual.speechNotSupported') }}
+            </v-alert>
+            <v-alert v-if="speechError" type="error" density="compact" class="mb-3" variant="tonal">
+              {{ t('addItemModal.manual.speechError') }}
+            </v-alert>
+            <v-alert v-if="isListening" type="info" density="compact" class="mb-3" variant="tonal" icon="mdi-microphone">
+              {{ t('addItemModal.manual.speechListening') }}
+            </v-alert>
             <v-row dense>
               <v-col cols="6">
                 <v-text-field v-model="manualItem.quantity" :label="t('addItemModal.manual.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
@@ -94,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useIngredientsStore } from '../stores/ingredients'
 import { useRecipesStore } from '../stores/recipes'
@@ -192,5 +211,48 @@ function addFromRecipe() {
   emit('add-recipe-ingredients', selectedRecipe.value.ingredients)
   emit('close')
 }
+
+// ── Speech-to-text ────────────────────────────────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+const isListening = ref(false)
+const speechUnsupported = ref(false)
+const speechError = ref(false)
+let recognition = null
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition()
+  recognition.lang = navigator.language || 'en-US'
+  recognition.interimResults = false
+  recognition.maxAlternatives = 1
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript
+    manualSelection.value = transcript
+    onManualSelectionChange(transcript)
+    isListening.value = false
+  }
+  recognition.onerror = () => {
+    speechError.value = true
+    isListening.value = false
+  }
+  recognition.onend = () => { isListening.value = false }
+}
+
+function toggleSpeech() {
+  if (!SpeechRecognition) {
+    speechUnsupported.value = true
+    return
+  }
+  speechError.value = false
+  if (isListening.value) {
+    recognition.stop()
+    isListening.value = false
+    return
+  }
+  recognition.start()
+  isListening.value = true
+}
+
+onUnmounted(() => { recognition?.stop() })
 </script>
 

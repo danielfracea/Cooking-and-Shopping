@@ -41,6 +41,10 @@ export default {
       text: 'Add your first item to this list.',
     },
     shareCopied: 'Share link copied to clipboard!',
+    speechToText: 'Speak item name',
+    speechNotSupported: 'Speech recognition is not supported in this browser',
+    speechListening: 'Listening\u2026',
+    speechError: 'Speech recognition failed. Please try again.',
   },
   sharedList: {
     error: {
@@ -205,6 +209,10 @@ export default {
       unit: 'Unit',
       unitPlaceholder: 'kg, L, pcs\u2026',
       add: 'Add Item',
+      speechToText: 'Speak item name',
+      speechNotSupported: 'Speech recognition is not supported in this browser',
+      speechListening: 'Listening\u2026',
+      speechError: 'Speech recognition failed. Please try again.',
     },
     ingredient: {
       search: 'Search ingredients\u2026',

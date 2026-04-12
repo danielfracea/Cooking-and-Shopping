@@ -41,6 +41,10 @@ export default {
       text: 'Adăugați primul articol în această listă.',
     },
     shareCopied: 'Linkul de distribuire a fost copiat!',
+    speechToText: 'Dictează numele articolului',
+    speechNotSupported: 'Recunoașterea vocală nu este suportată în acest browser',
+    speechListening: 'Ascultare\u2026',
+    speechError: 'Recunoașterea vocală a eșuat. Vă rugăm să încercați din nou.',
   },
   sharedList: {
     error: {
@@ -205,6 +209,10 @@ export default {
       unit: 'Unitate',
       unitPlaceholder: 'kg, L, buc\u2026',
       add: 'Adaugă articol',
+      speechToText: 'Dictează numele articolului',
+      speechNotSupported: 'Recunoașterea vocală nu este suportată în acest browser',
+      speechListening: 'Ascultare\u2026',
+      speechError: 'Recunoașterea vocală a eșuat. Vă rugăm să încercați din nou.',
     },
     ingredient: {
       search: 'Caută ingrediente\u2026',
