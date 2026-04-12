@@ -119,8 +119,9 @@ import { useIngredientsStore } from '../stores/ingredients'
 import { useRecipesStore } from '../stores/recipes'
 import { useSettingsStore } from '../stores/settings'
 import { UNIT_SELECT_ITEMS } from '../utils/units.js'
+import { LOCALE_TO_SPEECH_LANG } from '../utils/speech.js'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const emit = defineEmits(['close', 'add-item', 'add-recipe-ingredients'])
 
 const ingredientsStore = useIngredientsStore()
@@ -221,7 +222,6 @@ let recognition = null
 
 if (SpeechRecognition) {
   recognition = new SpeechRecognition()
-  recognition.lang = navigator.language || 'en-US'
   recognition.interimResults = false
   recognition.maxAlternatives = 1
 
@@ -249,6 +249,7 @@ function toggleSpeech() {
     isListening.value = false
     return
   }
+  recognition.lang = LOCALE_TO_SPEECH_LANG[locale.value] || navigator.language || 'en-US'
   recognition.start()
   isListening.value = true
 }
