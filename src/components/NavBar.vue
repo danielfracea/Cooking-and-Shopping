@@ -13,10 +13,18 @@
         <v-btn :to="'/recipes'" variant="text" prepend-icon="mdi-book-open-variant" rounded="lg">{{ t('nav.recipes') }}</v-btn>
         <v-btn :to="'/meal-planner'" variant="text" prepend-icon="mdi-calendar-month" rounded="lg">{{ t('nav.mealPlanner') }}</v-btn>
       </div>
-      <v-btn-toggle v-model="currentLocale" mandatory density="compact" rounded="lg" class="mr-2" @update:model-value="setLocale">
-        <v-btn value="en" size="small">EN</v-btn>
-        <v-btn value="ro" size="small">RO</v-btn>
-      </v-btn-toggle>
+      <v-select
+        v-model="currentLocale"
+        :items="localeOptions"
+        item-title="label"
+        item-value="value"
+        density="compact"
+        variant="outlined"
+        hide-details
+        class="mr-2 locale-select"
+        style="max-width: 130px"
+        @update:model-value="setLocale"
+      />
       <v-menu v-if="authStore.user">
         <template #activator="{ props }">
           <v-btn icon v-bind="props" class="mr-1">
@@ -62,6 +70,14 @@ const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const drawer = ref(false)
 const currentLocale = ref(locale.value)
+
+const localeOptions = [
+  { value: 'en', label: '🇬🇧 English' },
+  { value: 'ro', label: '🇷🇴 Română' },
+  { value: 'fr', label: '🇫🇷 Français' },
+  { value: 'es', label: '🇪🇸 Español' },
+  { value: 'de', label: '🇩🇪 Deutsch' },
+]
 
 const userInitial = computed(() => {
   const name = authStore.user?.displayName || authStore.user?.email || '?'
