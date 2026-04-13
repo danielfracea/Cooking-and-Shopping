@@ -34,7 +34,7 @@
       </v-card>
 
       <v-card class="mb-4 pa-3">
-        <v-row dense align="center">
+        <v-row density="comfortable" align="center">
           <v-col>
             <v-combobox
               v-model="quickAddSelection"

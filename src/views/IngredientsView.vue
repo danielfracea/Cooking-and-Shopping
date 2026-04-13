@@ -5,7 +5,7 @@
       <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddModal">{{ t('ingredients.add') }}</v-btn>
     </div>
 
-    <v-row dense class="mb-4">
+    <v-row density="comfortable" class="mb-4">
       <v-col cols="12" sm="6" md="4">
         <v-text-field
           v-model="search"
@@ -79,7 +79,7 @@
             <v-chip size="x-small" color="blue-lighten-4" text-color="blue-darken-3">{{ ing.category }}</v-chip>
           </v-card-title>
           <v-card-text class="pt-1">
-            <v-row dense class="text-caption text-medium-emphasis">
+            <v-row density="comfortable" class="text-caption text-medium-emphasis">
               <v-col cols="6">💰 {{ ing.price }} RON/{{ ing.unit }}</v-col>
               <v-col cols="6">🔥 {{ ing.calories }} kcal</v-col>
               <v-col cols="4">P: {{ ing.protein }}g</v-col>
@@ -105,7 +105,7 @@
         </v-card-title>
         <v-card-text>
           <v-text-field v-model="form.name" :label="t('ingredients.dialog.name')" variant="outlined" density="compact" class="mb-2" />
-          <v-row dense>
+          <v-row density="comfortable">
             <v-col cols="6"><v-text-field v-model="form.category" :label="t('ingredients.dialog.category')" variant="outlined" density="compact" /></v-col>
             <v-col cols="6"><v-combobox v-model="form.unit" :label="t('ingredients.dialog.unit')" :items="unitSelectItems" item-title="title" item-value="value" variant="outlined" density="compact" /></v-col>
             <v-col cols="6"><v-text-field v-model="form.price" :label="t('ingredients.dialog.price')" type="number" variant="outlined" density="compact" min="0" step="0.01" /></v-col>

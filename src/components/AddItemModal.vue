@@ -47,7 +47,7 @@
             <v-alert v-if="isListening" type="info" density="compact" class="mb-3" variant="tonal" icon="mdi-microphone">
               {{ t('addItemModal.manual.speechListening') }}
             </v-alert>
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="6">
                 <v-text-field v-model="manualItem.quantity" :label="t('addItemModal.manual.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
               </v-col>
@@ -72,7 +72,7 @@
                 @click="selectIngredient(ing)"
               />
             </v-list>
-            <v-row v-if="selectedIngredient" dense class="mt-2">
+            <v-row v-if="selectedIngredient" density="comfortable" class="mt-2">
               <v-col cols="6">
                 <v-text-field v-model="ingQuantity" :label="t('addItemModal.ingredient.quantity')" type="number" variant="outlined" density="compact" min="0.1" step="0.1" />
               </v-col>

@@ -133,7 +133,7 @@
       <v-card class="mb-4">
         <v-card-title class="pb-1">{{ t('recipes.detail.nutritionalValues') }}</v-card-title>
         <v-card-text>
-          <v-row dense>
+          <v-row density="comfortable">
             <v-col cols="12" sm="6">
               <p class="text-caption text-uppercase text-medium-emphasis mb-2">{{ t('recipes.detail.total') }}</p>
               <div class="d-flex flex-wrap ga-2">
@@ -273,7 +273,7 @@
         <v-card-text>
           <v-text-field v-model="newRecipe.name" :label="t('recipes.addDialog.name')" variant="outlined" density="compact" :placeholder="t('recipes.addDialog.placeholder.name')" class="mb-2" />
           <v-text-field v-model="newRecipe.description" :label="t('recipes.addDialog.description')" variant="outlined" density="compact" class="mb-2" />
-          <v-row dense>
+          <v-row density="comfortable">
             <v-col cols="12">
               <v-combobox
                 v-model="newRecipe.tags"
