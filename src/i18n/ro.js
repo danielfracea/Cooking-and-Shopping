@@ -46,6 +46,12 @@ export default {
     speechNotSupported: 'Recunoașterea vocală nu este suportată în acest browser',
     speechListening: 'Ascultare\u2026',
     speechError: 'Recunoașterea vocală a eșuat. Vă rugăm să încercați din nou.',
+    viewMode: {
+      default: 'Ordine implicită',
+      sortByName: 'Sortare după nume',
+      groupByCategory: 'Grupare după categorie',
+      uncategorized: 'Fără categorie',
+    },
   },
   sharedList: {
     error: {

@@ -46,6 +46,12 @@ export default {
     speechNotSupported: 'La reconnaissance vocale n\'est pas prise en charge dans ce navigateur',
     speechListening: 'Écoute\u2026',
     speechError: 'Échec de la reconnaissance vocale. Veuillez réessayer.',
+    viewMode: {
+      default: 'Ordre par défaut',
+      sortByName: 'Trier par nom',
+      groupByCategory: 'Grouper par catégorie',
+      uncategorized: 'Sans catégorie',
+    },
   },
   sharedList: {
     error: {

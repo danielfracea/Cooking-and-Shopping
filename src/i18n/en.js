@@ -46,6 +46,12 @@ export default {
     speechNotSupported: 'Speech recognition is not supported in this browser',
     speechListening: 'Listening\u2026',
     speechError: 'Speech recognition failed. Please try again.',
+    viewMode: {
+      default: 'Default order',
+      sortByName: 'Sort by name',
+      groupByCategory: 'Group by category',
+      uncategorized: 'Uncategorized',
+    },
   },
   sharedList: {
     error: {

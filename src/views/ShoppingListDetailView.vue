@@ -88,30 +88,74 @@
         :text="t('shoppingListDetail.empty.text')"
       />
 
-      <v-card v-else>
-        <v-list>
-          <v-list-item
-            v-for="item in list.items"
-            :key="item.id"
-            :class="{ 'text-decoration-line-through text-medium-emphasis': item.checked }"
-          >
-            <template #prepend>
-              <v-checkbox-btn
-                :model-value="item.checked"
-                color="primary"
-                @update:model-value="toggleItem(item.id)"
-              />
-            </template>
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-            <v-list-item-subtitle v-if="item.quantity || item.unit">
-              {{ formatItemQuantity(item) }}
-            </v-list-item-subtitle>
-            <template #append>
-              <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click="removeItem(item.id)" />
-            </template>
-          </v-list-item>
-        </v-list>
-      </v-card>
+      <template v-else>
+        <div class="d-flex align-center justify-end mb-2 ga-2">
+          <v-btn-toggle v-model="viewMode" density="compact" variant="outlined" color="primary" mandatory>
+            <v-btn value="default" :title="t('shoppingListDetail.viewMode.default')">
+              <v-icon>mdi-format-list-bulleted</v-icon>
+            </v-btn>
+            <v-btn value="name" :title="t('shoppingListDetail.viewMode.sortByName')">
+              <v-icon>mdi-sort-alphabetical-ascending</v-icon>
+            </v-btn>
+            <v-btn value="category" :title="t('shoppingListDetail.viewMode.groupByCategory')">
+              <v-icon>mdi-tag-multiple-outline</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+
+        <v-card v-if="viewMode !== 'category'">
+          <v-list>
+            <v-list-item
+              v-for="item in displayedItems"
+              :key="item.id"
+              :class="{ 'text-decoration-line-through text-medium-emphasis': item.checked }"
+            >
+              <template #prepend>
+                <v-checkbox-btn
+                  :model-value="item.checked"
+                  color="primary"
+                  @update:model-value="toggleItem(item.id)"
+                />
+              </template>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle v-if="item.quantity || item.unit">
+                {{ formatItemQuantity(item) }}
+              </v-list-item-subtitle>
+              <template #append>
+                <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click="removeItem(item.id)" />
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-card>
+
+        <template v-else>
+          <v-card v-for="[category, items] in groupedItems" :key="category" class="mb-3">
+            <v-list>
+              <v-list-subheader>{{ category }}</v-list-subheader>
+              <v-list-item
+                v-for="item in items"
+                :key="item.id"
+                :class="{ 'text-decoration-line-through text-medium-emphasis': item.checked }"
+              >
+                <template #prepend>
+                  <v-checkbox-btn
+                    :model-value="item.checked"
+                    color="primary"
+                    @update:model-value="toggleItem(item.id)"
+                  />
+                </template>
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+                <v-list-item-subtitle v-if="item.quantity || item.unit">
+                  {{ formatItemQuantity(item) }}
+                </v-list-item-subtitle>
+                <template #append>
+                  <v-btn icon="mdi-delete" variant="text" color="error" size="small" @click="removeItem(item.id)" />
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </template>
+      </template>
     </div>
 
     <AddItemModal v-if="showAddItem" @close="showAddItem = false" @add-item="addItem" @add-recipe-ingredients="addRecipeIngredients" />
@@ -138,9 +182,34 @@ const ingredientsStore = useIngredientsStore()
 const settingsStore = useSettingsStore()
 const showAddItem = ref(false)
 const shareCopied = ref(false)
+const viewMode = ref('default')
 const list = computed(() => store.getList(route.params.id))
 const checkedCount = computed(() => list.value?.items.filter(i => i.checked).length ?? 0)
 const progressPercent = computed(() => list.value?.items.length > 0 ? (checkedCount.value / list.value.items.length) * 100 : 0)
+
+const displayedItems = computed(() => {
+  if (!list.value) return []
+  if (viewMode.value === 'name') {
+    return [...list.value.items].sort((a, b) => a.name.localeCompare(b.name))
+  }
+  return list.value.items
+})
+
+function getItemCategory(item) {
+  return ingredientsStore.getIngredient(item.ingredientId)?.category || t('shoppingListDetail.viewMode.uncategorized')
+}
+
+const groupedItems = computed(() => {
+  if (!list.value) return []
+  const map = new Map()
+  const sorted = [...list.value.items].sort((a, b) => a.name.localeCompare(b.name))
+  for (const item of sorted) {
+    const cat = getItemCategory(item)
+    if (!map.has(cat)) map.set(cat, [])
+    map.get(cat).push(item)
+  }
+  return [...map.entries()].sort(([a], [b]) => a.localeCompare(b))
+})
 function formatItemQuantity(item) {
   const { quantity, unit } = settingsStore.displayQuantity(item.quantity, item.unit)
   return unit ? `${quantity} ${unit}` : quantity
