@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cook &amp; Shop</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="continue_as_guest">Continue as Guest</string>
+    <string name="sign_in_prompt">Sign in to sync your data across devices</string>
+    <string name="shopping_lists">Shopping Lists</string>
+    <string name="recipes">Recipes</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="meal_planner">Meal Planner</string>
+    <string name="settings">Settings</string>
+</resources>

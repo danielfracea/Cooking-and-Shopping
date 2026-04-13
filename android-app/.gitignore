@@ -1,0 +1,14 @@
+# Android build artifacts
+.gradle/
+local.properties
+.idea/
+*.iml
+build/
+app/build/
+
+# Firebase production config (replace placeholder with real one before building)
+# app/google-services.json
+
+# Keystore files
+*.jks
+*.keystore
