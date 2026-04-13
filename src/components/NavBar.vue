@@ -72,7 +72,7 @@ const drawer = ref(false)
 const currentLocale = ref(locale.value)
 
 const localeOptions = [
-  { value: 'en', label: '🇬🇧 English' },
+  { value: 'en', label: '🇺🇸 English' },
   { value: 'ro', label: '🇷🇴 Română' },
   { value: 'fr', label: '🇫🇷 Français' },
   { value: 'es', label: '🇪🇸 Español' },
