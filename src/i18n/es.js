@@ -46,6 +46,12 @@ export default {
     speechNotSupported: 'El reconocimiento de voz no está disponible en este navegador',
     speechListening: 'Escuchando\u2026',
     speechError: 'Error en el reconocimiento de voz. Por favor, inténtalo de nuevo.',
+    viewMode: {
+      default: 'Orden predeterminado',
+      sortByName: 'Ordenar por nombre',
+      groupByCategory: 'Agrupar por categoría',
+      uncategorized: 'Sin categoría',
+    },
   },
   sharedList: {
     error: {

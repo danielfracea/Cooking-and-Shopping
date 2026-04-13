@@ -46,6 +46,12 @@ export default {
     speechNotSupported: 'Spracherkennung wird in diesem Browser nicht unterstützt',
     speechListening: 'Hört zu\u2026',
     speechError: 'Spracherkennung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+    viewMode: {
+      default: 'Standardreihenfolge',
+      sortByName: 'Nach Namen sortieren',
+      groupByCategory: 'Nach Kategorie gruppieren',
+      uncategorized: 'Ohne Kategorie',
+    },
   },
   sharedList: {
     error: {
