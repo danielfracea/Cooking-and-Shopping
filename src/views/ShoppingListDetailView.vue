@@ -190,9 +190,15 @@ const progressPercent = computed(() => list.value?.items.length > 0 ? (checkedCo
 const displayedItems = computed(() => {
   if (!list.value) return []
   if (viewMode.value === 'name') {
-    return [...list.value.items].sort((a, b) => a.name.localeCompare(b.name))
+    return [...list.value.items].sort((a, b) => {
+      if (a.checked !== b.checked) return a.checked ? 1 : -1
+      return a.name.localeCompare(b.name)
+    })
   }
-  return list.value.items
+  return [...list.value.items].sort((a, b) => {
+    if (a.checked !== b.checked) return a.checked ? 1 : -1
+    return 0
+  })
 })
 
 function getItemCategory(item) {
@@ -202,7 +208,10 @@ function getItemCategory(item) {
 const groupedItems = computed(() => {
   if (!list.value) return []
   const map = new Map()
-  const sorted = [...list.value.items].sort((a, b) => a.name.localeCompare(b.name))
+  const sorted = [...list.value.items].sort((a, b) => {
+    if (a.checked !== b.checked) return a.checked ? 1 : -1
+    return a.name.localeCompare(b.name)
+  })
   for (const item of sorted) {
     const cat = getItemCategory(item)
     if (!map.has(cat)) map.set(cat, [])
